@@ -25,16 +25,23 @@ jobs:
       - name: generate oidc token
         shell: bash 
         run: |
-          # Ask GitHub for a JWT OIDC token with AWS's audience
-          TOK_JSON=$(curl -sS -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")
+          set -euo pipefail
 
-          # Extract token without printing it
-          JWT=$(echo "$TOK_JSON" | jq -r '.value')
+          # Request a GitHub OIDC token with AWS audience
+          RESP="$(curl -fsS \
+            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
 
-          # Decode JWT payload (claims) safely and show key fields
-          echo "$JWT" | \
-            awk -F. '{print $2}' | tr '_-' '/+' | base64 -d 2>/dev/null | \
-            jq '{iss, aud, sub, exp}'
+          # Extract JWT
+          JWT="$(echo "$RESP" | jq -r '.value')"
+
+          # Decode base64url payload safely
+          PAYLOAD_B64="$(echo "$JWT" | cut -d. -f2)"
+          PAD=$(( (4 - ${#PAYLOAD_B64} % 4) % 4 ))
+          printf -v PADSTR "%*s" "$PAD" ""; PADSTR="${PADSTR// /=}"
+          echo "${PAYLOAD_B64}${PADSTR}" \
+            | tr '_-' '/+' \
+            | base64 -d \
+            | jq '{iss,aud,sub,exp}'
 
 
