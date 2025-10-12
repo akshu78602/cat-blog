@@ -31,4 +31,5 @@ jobs:
           echo "$JWT" | \
             awk -F. '{print $2}' | tr '_-' '/+' | base64 -d 2>/dev/null | \
             jq '{iss, aud, sub, exp}'
+            
 
