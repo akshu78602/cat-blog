@@ -83,10 +83,21 @@ jobs:
           working-directory: ${{ env.terraform-working-dirctory }}
           run: terraform plan -input=false
 
-        - name: apply terraform[i.e Changes]
-          if: ${{github.event_name=='push'}}
-          working-directory: ${{ env.terraform-working-dirctory }}
-          run: terraform apply -auto-approve
+        - name: Terraform Plan (push only; detect changes)
+          id: plan
+          if: ${{ github.event_name == 'push' }}
+          working-directory: ${{ env.TF_WORKDIR }}
+          run: |
+            set +e
+            terraform plan -input=false -no-color -detailed-exitcode -out=tfplan
+            code=$?
+            echo "exit_code=$code" >> $GITHUB_OUTPUT
+            if [ $code -gt 2 ]; then exit $code; fi
+            exit 0
 
+        - name: Terraform Apply (only if changes)
+          if: ${{ steps.plan.outputs.exit_code == '2' }}
+          working-directory: ${{ env.TF_WORKDIR }}
+          run: terraform apply -input=false -auto-approve tfplan
 
 
