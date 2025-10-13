@@ -52,4 +52,7 @@ jobs:
       - name: test-who-am-i
         run: aws sts get-caller-identity
 
+      - name: check docker and aws version
+        run: docker --version && aws --version
+
 
