@@ -43,6 +43,12 @@ jobs:
             | tr '_-' '/+' \
             | base64 -d \
             | jq '{iss,aud,sub,exp}'
+
+      - name: set calling aws via oidc
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+            role-to-assume: "arn:aws:iam::424851482428:role/test"
+            aws-region: us-east-1
       - name: test-who-am-i
         run: aws sts get-caller-identity
 
