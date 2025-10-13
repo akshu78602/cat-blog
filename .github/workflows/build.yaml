@@ -43,5 +43,7 @@ jobs:
             | tr '_-' '/+' \
             | base64 -d \
             | jq '{iss,aud,sub,exp}'
+      - name: test-who-am-i
+        run: aws sts get-caller-identity
 
 
