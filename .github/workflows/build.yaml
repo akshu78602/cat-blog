@@ -1,4 +1,4 @@
-name: build and pushes ECR
+name: build and ECR operation
 
 on:
   push:
@@ -55,15 +55,6 @@ jobs:
         - name: test-who-am-i
           run: aws sts get-caller-identity
 
-    #------------------------------BUILD THE IMAGE---------------------------------------
-
-        - name: check docker and aws version
-          run: docker --version && aws --version
-
-        - name: Build Image
-          run: docker build -t blog:v1 -f Dockerfile .
-
-
       #------------------------------- TERRAFORM SETUP----------------------------------------
         - name: Prepare terraform
           uses: hashicorp/setup-terraform@v3
@@ -101,29 +92,11 @@ jobs:
           run: terraform apply -input=false -auto-approve tfplan
 
         - name: Login to ECR
-          run: |
-            ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
-            aws ecr get-login-password --region "$AWS_REGION" \
-              | docker login --username AWS --password-stdin \
-                "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
 
         - name: Build, tag, and push
           run: |
-            set -euo pipefail
-            ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
-            IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
-            TAG="${GITHUB_SHA}"
-
-            docker build -t "${ECR_REPO}:${TAG}" -f Dockerfile .
-            docker tag "${ECR_REPO}:${TAG}" "${IMAGE_URI}:${TAG}"
-            docker tag "${ECR_REPO}:${TAG}" "${IMAGE_URI}:latest"
-
-            docker push "${IMAGE_URI}:${TAG}"
-            docker push "${IMAGE_URI}:latest"
-
-            echo "Pushed:"
-            echo "  ${IMAGE_URI}:${TAG}"
-            echo "  ${IMAGE_URI}:latest"
-
-
+            docker build -t cat-blogs .
+            docker tag cat-blogs:latest 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
+            docker push 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
 
