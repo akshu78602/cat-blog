@@ -14,49 +14,49 @@ env:
   terraform-working-dirctory: infra/ecr
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    permissions:
-        id-token: write
-        contents: read
-    
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
+  - build:
+      runs-on: ubuntu-latest
+      permissions:
+          id-token: write
+          contents: read
+      
+      steps:
+        - name: checkout
+          uses: actions/checkout@v4
 
 
-      - name: generate oidc token
-        shell: bash 
-        run: |
-          set -euo pipefail
+        - name: generate oidc token
+          shell: bash 
+          run: |
+            set -euo pipefail
 
-          # Request a GitHub OIDC token with AWS audience
-          RESP="$(curl -fsS \
-            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
+            # Request a GitHub OIDC token with AWS audience
+            RESP="$(curl -fsS \
+              -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+              "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
 
-          # Extract JWT
-          JWT="$(echo "$RESP" | jq -r '.value')"
+            # Extract JWT
+            JWT="$(echo "$RESP" | jq -r '.value')"
 
-          # Decode base64url payload safely
-          PAYLOAD_B64="$(echo "$JWT" | cut -d. -f2)"
-          PAD=$(( (4 - ${#PAYLOAD_B64} % 4) % 4 ))
-          printf -v PADSTR "%*s" "$PAD" ""; PADSTR="${PADSTR// /=}"
-          echo "${PAYLOAD_B64}${PADSTR}" \
-            | tr '_-' '/+' \
-            | base64 -d \
-            | jq '{iss,aud,sub,exp}'
+            # Decode base64url payload safely
+            PAYLOAD_B64="$(echo "$JWT" | cut -d. -f2)"
+            PAD=$(( (4 - ${#PAYLOAD_B64} % 4) % 4 ))
+            printf -v PADSTR "%*s" "$PAD" ""; PADSTR="${PADSTR// /=}"
+            echo "${PAYLOAD_B64}${PADSTR}" \
+              | tr '_-' '/+' \
+              | base64 -d \
+              | jq '{iss,aud,sub,exp}'
 
-      - name: call aws via oidc
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-            role-to-assume: "arn:aws:iam::424851482428:role/abc"
-            aws-region: us-east-1
-      - name: test-who-am-i
-        run: aws sts get-caller-identity
+        - name: call aws via oidc
+          uses: aws-actions/configure-aws-credentials@v4
+          with:
+              role-to-assume: "arn:aws:iam::424851482428:role/abc"
+              aws-region: us-east-1
+        - name: test-who-am-i
+          run: aws sts get-caller-identity
 
     #------------------------------BUILD THE IMAGE---------------------------------------
-  build-Image:
+  - build-Image:
 
       - name: check docker and aws version
         run: docker --version && aws --version
@@ -66,7 +66,7 @@ jobs:
 
 
     #------------------------------- TERRAFORM SETUP----------------------------------------
-  Terraform-implmentation:
+  - Terraform-implmentation:
       - name: Prepare terraform
         uses: hashicorp/setup-terraform@v3
         with:
