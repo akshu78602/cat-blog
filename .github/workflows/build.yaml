@@ -72,12 +72,12 @@ jobs:
           terraform_version: "1.1.7"
 
       - name: Terraform Init
-        working-directory: ${{ env. terraform-working-dirctory }}
+        working-directory: ${{ env.terraform-working-dirctory }}
         run: terraform init -input=false
 
       - name: Terraform Validate
         working-directory: ${{ env.terraform-working-dirctory }}
-        run: terraform validate -input=false
+        run: terraform validate
       
       - name: run terraform plan[PR ONLY]
         if: ${{github.event_name=='pull_request'}}
