@@ -99,6 +99,31 @@ jobs:
           if: ${{ steps.plan.outputs.exit_code == '2' }}
           working-directory: ${{ env.TF_WORKDIR }}
           run: terraform apply -input=false -auto-approve tfplan
-          
+
+        - name: Login to ECR
+          run: |
+            ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+            aws ecr get-login-password --region "$AWS_REGION" \
+              | docker login --username AWS --password-stdin \
+                "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+        - name: Build, tag, and push
+          run: |
+            set -euo pipefail
+            ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+            IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
+            TAG="${GITHUB_SHA}"
+
+            docker build -t "${ECR_REPO}:${TAG}" -f Dockerfile .
+            docker tag "${ECR_REPO}:${TAG}" "${IMAGE_URI}:${TAG}"
+            docker tag "${ECR_REPO}:${TAG}" "${IMAGE_URI}:latest"
+
+            docker push "${IMAGE_URI}:${TAG}"
+            docker push "${IMAGE_URI}:latest"
+
+            echo "Pushed:"
+            echo "  ${IMAGE_URI}:${TAG}"
+            echo "  ${IMAGE_URI}:latest"
+
 
 
