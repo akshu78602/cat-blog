@@ -14,7 +14,7 @@ env:
   terraform-working-dirctory: infra/ecr
 
 jobs:
-  - build:
+    build:
       runs-on: ubuntu-latest
       permissions:
           id-token: write
@@ -56,39 +56,37 @@ jobs:
           run: aws sts get-caller-identity
 
     #------------------------------BUILD THE IMAGE---------------------------------------
-  - build-Image:
 
-      - name: check docker and aws version
-        run: docker --version && aws --version
+        - name: check docker and aws version
+          run: docker --version && aws --version
 
-      - name: Build Image
-        run: docker build -t blog:v1 -f Dockerfile .
+        - name: Build Image
+          run: docker build -t blog:v1 -f Dockerfile .
 
 
-    #------------------------------- TERRAFORM SETUP----------------------------------------
-  - Terraform-implmentation:
-      - name: Prepare terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: "1.1.7"
+      #------------------------------- TERRAFORM SETUP----------------------------------------
+        - name: Prepare terraform
+          uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: "1.1.7"
 
-      - name: Terraform Init
-        working-directory: ${{ env.terraform-working-dirctory }}
-        run: terraform init -input=false
+        - name: Terraform Init
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform init -input=false
 
-      - name: Terraform Validate
-        working-directory: ${{ env.terraform-working-dirctory }}
-        run: terraform validate
-      
-      - name: run terraform plan[PR ONLY]
-        if: ${{github.event_name=='pull_request'}}
-        working-directory: ${{ env.terraform-working-dirctory }}
-        run: terraform plan -input=false
+        - name: Terraform Validate
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform validate
+        
+        - name: run terraform plan[PR ONLY]
+          if: ${{github.event_name=='pull_request'}}
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform plan -input=false
 
-      - name: apply terraform[i.e Changes]
-        if: ${{github.event_name=='push'}}
-        working-directory: ${{ env.terraform-working-dirctory }}
-        run: terraform apply -auto-approve
+        - name: apply terraform[i.e Changes]
+          if: ${{github.event_name=='push'}}
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform apply -auto-approve
 
 
 
