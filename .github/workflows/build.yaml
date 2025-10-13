@@ -1,14 +1,14 @@
 name: build and pushes ECR
 
 on:
-  # push:
-  #   branches:
-  #     - master 
-  # pull_request:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master 
+  pull_request:
+    branches:
+      - master
 
-   workflow_dispatch:
+  #  workflow_dispatch:
 
 jobs:
   build:
@@ -54,5 +54,8 @@ jobs:
 
       - name: check docker and aws version
         run: docker --version && aws --version
+
+      - name: Build Image
+        run: docker build -t blog:v1 -f Dockerfile .
 
 
