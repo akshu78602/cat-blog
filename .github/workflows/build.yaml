@@ -11,7 +11,7 @@ on:
   #  workflow_dispatch:
 
 env:
-  terraform-working-dirctory: infra\ecr
+  terraform-working-dirctory: infra/ecr
 
 jobs:
   build:
