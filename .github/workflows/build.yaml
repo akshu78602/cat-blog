@@ -56,7 +56,7 @@ jobs:
         run: aws sts get-caller-identity
 
     #------------------------------BUILD THE IMAGE---------------------------------------
-    build-Image:
+  build-Image:
 
       - name: check docker and aws version
         run: docker --version && aws --version
@@ -66,7 +66,7 @@ jobs:
 
 
     #------------------------------- TERRAFORM SETUP----------------------------------------
-    Terraform-implmentation:
+  Terraform-implmentation:
       - name: Prepare terraform
         uses: hashicorp/setup-terraform@v3
         with:
