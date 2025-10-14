@@ -1,4 +1,4 @@
-name: build and pushes ECR
+name: build and ECR operation
 
 on:
   push:
@@ -55,15 +55,6 @@ jobs:
         - name: test-who-am-i
           run: aws sts get-caller-identity
 
-    #------------------------------BUILD THE IMAGE---------------------------------------
-
-        - name: check docker and aws version
-          run: docker --version && aws --version
-
-        - name: Build Image
-          run: docker build -t blog:v1 -f Dockerfile .
-
-
       #------------------------------- TERRAFORM SETUP----------------------------------------
         - name: Prepare terraform
           uses: hashicorp/setup-terraform@v3
@@ -99,6 +90,13 @@ jobs:
           if: ${{ steps.plan.outputs.exit_code == '2' }}
           working-directory: ${{ env.TF_WORKDIR }}
           run: terraform apply -input=false -auto-approve tfplan
-          
 
+        - name: Login to ECR
+          run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
+
+        - name: Build, tag, and push
+          run: |
+            docker build -t cat-blogs .
+            docker tag cat-blogs:latest 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
+            docker push 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
 
