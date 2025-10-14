@@ -1,5 +1,139 @@
 <!doctype html>
-<html><body>
-<h1>Cat Blog is alive 🐱</h1>
-<p>CATBLOG_OK</p>
-</body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Muffin’s Cat Blog 🐱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Muffin the cat — a cozy photo gallery." />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <style>
+    :root{
+      --bg:#0f1020; --card:#161938; --text:#e9edf3; --muted:#a7b0c8;
+      --accent:#8bd3ff; --ring:rgba(139,211,255,.35);
+      --radius:18px; --shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%), var(--bg);
+      color:var(--text); font:500 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:980px;margin:56px auto;padding:0 18px}
+    .hero{background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
+      border:1px solid rgba(255,255,255,.08); border-radius:calc(var(--radius) + 6px);
+      padding:28px 28px 8px; box-shadow:var(--shadow)}
+    .badge{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08); padding:6px 12px;border-radius:999px;color:var(--muted);
+      font-size:14px;margin-bottom:10px}
+    .title{font-size:clamp(28px,4vw,46px);line-height:1.1;margin:4px 0 10px}
+    .subtitle{color:var(--muted);margin:0 0 18px}
+    .status{display:inline-flex;gap:8px;align-items:center;background:#0e1326;border:1px dashed rgba(139,211,255,.45);
+      color:var(--accent);padding:8px 12px;border-radius:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
+    .grid{margin-top:22px;display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+    .card{grid-column:span 12;background:var(--card);border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius); box-shadow:var(--shadow);overflow:hidden}
+    @media(min-width:720px){.card.half{grid-column:span 6}}
+    .inner{padding:18px}
+    h3{margin:0 0 8px;font-size:20px}
+    .muted{color:var(--muted)}
+    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:14px}
+    .photo{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);background:#0b0d1a;cursor:pointer}
+    .photo img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .25s ease}
+    .photo:hover img{transform:scale(1.03)}
+    .footer{color:var(--muted);text-align:center;font-size:14px;margin:22px 0 0}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
+    .lightbox.open{display:flex}
+    .lightbox img{max-width:min(92vw,1200px);max-height:82vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+    .lb-ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px}
+    .lb-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
+    .lb-btn:hover{outline:2px solid var(--ring)}
+    .lb-close{position:absolute;top:16px;right:16px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="badge">🐾 Welcome to Muffin’s corner</div>
+      <h1 class="title">Cat Blog is alive 🐱</h1>
+      <p class="subtitle">Tiny static site. Fast, cozy, and purr-fect for photos.</p>
+      <div class="status">CATBLOG_OK</div>
+
+      <div class="grid">
+        <div class="card half">
+          <div class="inner">
+            <h3>About Muffin</h3>
+            <p class="muted">
+              <strong>Hello, my name is Muffin.</strong> I’m a majestic floof who loves sunbeams,
+              cardboard diplomacy, and stepping on keyboards at 3 AM. Enjoy my best photo below! 😺
+            </p>
+          </div>
+        </div>
+
+        <div class="card half">
+          <div class="inner">
+            <h3>Photo Gallery</h3>
+            <p class="muted">Images are served from the <code>/images</code> folder on your server.</p>
+          </div>
+          <div id="gallery" class="gallery"></div>
+        </div>
+      </div>
+    </section>
+
+    <p class="footer">Made with ❤️ for Muffin. <span class="pill">Static HTML • No backend needed</span></p>
+  </div>
+
+  <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
+    <div class="lb-ui">
+      <button id="prev" class="lb-btn" aria-label="Previous">⟨ Prev</button>
+      <button id="next" class="lb-btn" aria-label="Next">Next ⟩</button>
+      <button id="close" class="lb-btn lb-close" aria-label="Close">✕</button>
+    </div>
+    <img id="lbimg" alt="Muffin photo" />
+  </div>
+
+  <script>
+    /* Use your exact filename here */
+    const IMAGES = ["IMG_8793.png"];
+    const IMG_PATH = "images/";
+
+    const gallery = document.getElementById('gallery');
+    const lb = document.getElementById('lightbox');
+    const lbimg = document.getElementById('lbimg');
+    const btnPrev = document.getElementById('prev');
+    const btnNext = document.getElementById('next');
+    const btnClose = document.getElementById('close');
+
+    let idx = 0;
+
+    function openLB(i){ idx = i; lbimg.src = IMG_PATH + IMAGES[idx]; lb.classList.add('open'); }
+    function closeLB(){ lb.classList.remove('open'); lbimg.removeAttribute('src'); }
+    function next(){ idx = (idx + 1) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
+    function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
+
+    // Build gallery (shows the one image; add more names to IMAGES later if you like)
+    IMAGES.forEach((name,i)=>{
+      const fig = document.createElement('figure'); fig.className = 'photo';
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.alt = 'Muffin photo';
+      img.src = IMG_PATH + name;
+      fig.appendChild(img);
+      fig.addEventListener('click', ()=>openLB(i));
+      gallery.appendChild(fig);
+    });
+
+    // Lightbox controls
+    btnNext.addEventListener('click', next);
+    btnPrev.addEventListener('click', prev);
+    btnClose.addEventListener('click', closeLB);
+    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
+    document.addEventListener('keydown', (e)=>{
+      if(!lb.classList.contains('open')) return;
+      if(e.key==='Escape') closeLB();
+      if(e.key==='ArrowRight') next();
+      if(e.key==='ArrowLeft') prev();
+    });
+  </script>
+</body>
+</html>
