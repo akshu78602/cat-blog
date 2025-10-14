@@ -13,13 +13,19 @@
       --radius:18px; --shadow:0 10px 28px rgba(0,0,0,.35);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;background:radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%), var(--bg);
-      color:var(--text); font:500 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial}
+    html,body{
+      margin:0;
+      background:radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%), var(--bg);
+      color:var(--text); font:500 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial
+    }
+    img{max-width:100%;height:auto;display:block}
     a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
     .wrap{max-width:980px;margin:56px auto;padding:0 18px}
-    .hero{background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
+    .hero{
+      background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
       border:1px solid rgba(255,255,255,.08); border-radius:calc(var(--radius) + 6px);
-      padding:28px 28px 8px; box-shadow:var(--shadow)}
+      padding:28px 28px 8px; box-shadow:var(--shadow)
+    }
     .badge{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.05);
       border:1px solid rgba(255,255,255,.08); padding:6px 12px;border-radius:999px;color:var(--muted);
       font-size:14px;margin-bottom:10px}
@@ -34,17 +40,36 @@
     .inner{padding:18px}
     h3{margin:0 0 8px;font-size:20px}
     .muted{color:var(--muted)}
+
+    /* Gallery */
     .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:14px}
-    .photo{position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);background:#0b0d1a;cursor:pointer}
-    .photo img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .25s ease}
-    .photo:hover img{transform:scale(1.03)}
+    .photo{
+      position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);
+      background:#0b0d1a;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      aspect-ratio: 4 / 3; /* consistent card size */
+    }
+    /* Fill the frame (may crop slightly) */
+    .photo img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;        /* key change */
+      object-position: center;  /* keep subject centered */
+      transition: transform .25s ease;
+    }
+    .photo:hover img{transform:scale(1.02)}
+
     .footer{color:var(--muted);text-align:center;font-size:14px;margin:22px 0 0}
     .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
+
     /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
     .lightbox.open{display:flex}
-    .lightbox img{max-width:min(92vw,1200px);max-height:82vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+    .lightbox img{
+      width:auto;height:auto;
+      max-width:min(92vw,1200px); max-height:82vh;
+      border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)
+    }
     .lb-ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px}
     .lb-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
     .lb-btn:hover{outline:2px solid var(--ring)}
@@ -77,8 +102,9 @@
           <div id="gallery" class="gallery"></div>
         </div>
       </div>
-    </section>
 
+      <p class="footer">Made with &lt;3 for Muffin</p>
+    </section>
   </div>
 
   <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
@@ -91,9 +117,9 @@
   </div>
 
   <script>
-    /* Use your exact filename here */
-    const IMAGES = ["IMG_8793.png"];
-    const IMG_PATH = ""; 
+    /* Minimal config — put the image beside index.html or set IMG_PATH to "site/" etc. */
+    const IMAGES  = ["IMG_8793.png"];  // add more: ["IMG_8793.png","muffin2.jpg",...]
+    const IMG_PATH = "";               // e.g. "site/" if files are in ./site/
 
     const gallery = document.getElementById('gallery');
     const lb = document.getElementById('lightbox');
@@ -109,11 +135,12 @@
     function next(){ idx = (idx + 1) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
     function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
 
-    // Build gallery (shows the one image; add more names to IMAGES later if you like)
+    // Build gallery
     IMAGES.forEach((name,i)=>{
       const fig = document.createElement('figure'); fig.className = 'photo';
       const img = document.createElement('img');
       img.loading = 'lazy';
+      img.decoding = 'async';
       img.alt = 'Muffin photo';
       img.src = IMG_PATH + name;
       fig.appendChild(img);
