@@ -73,7 +73,6 @@
         <div class="card half">
           <div class="inner">
             <h3>Photo Gallery</h3>
-            <p class="muted">Images are served from the <code>/images</code> folder on your server.</p>
           </div>
           <div id="gallery" class="gallery"></div>
         </div>
@@ -95,7 +94,7 @@
   <script>
     /* Use your exact filename here */
     const IMAGES = ["IMG_8793.png"];
-    const IMG_PATH = "images/";
+      const IMG_PATH = "https://muffin0009.s3.us-west-2.amazonaws.com/images/"; // or "https://<your-cdn-domain>/images/"
 
     const gallery = document.getElementById('gallery');
     const lb = document.getElementById('lightbox');
