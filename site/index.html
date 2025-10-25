@@ -18,6 +18,11 @@
       background:radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%), var(--bg);
       color:var(--text); font:500 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial
     }
+
+    /* sticky footer layout */
+    body{min-height:100vh; display:flex; flex-direction:column}
+    .wrap{flex:1}
+
     img{max-width:100%;height:auto;display:block}
     a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
     .wrap{max-width:980px;margin:56px auto;padding:0 18px}
@@ -40,35 +45,53 @@
     .inner{padding:18px}
     h3{margin:0 0 8px;font-size:20px}
     .muted{color:var(--muted)}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
 
-    /* Gallery */
+    /* Gallery (OLD IMAGE KEPT) */
     .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:14px}
     .photo{
       position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);
       background:#0b0d1a;cursor:pointer;display:flex;align-items:center;justify-content:center;
-      aspect-ratio: 4 / 3; /* consistent card size */
+      aspect-ratio: 4 / 3;
     }
-    /* Fill the frame (may crop slightly) */
     .photo img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;        /* key change */
-      object-position: center;  /* keep subject centered */
-      transition: transform .25s ease;
+      width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .25s ease;
     }
     .photo:hover img{transform:scale(1.02)}
 
-    .footer{color:var(--muted);text-align:center;font-size:14px;margin:22px 0 0}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
+    /* 4 AM Story (NEW IMAGE WITH HOVER/TAP OVERLAY) */
+    .story-row{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:16px}
+    .story-card-img{grid-column:span 12}
+    .story-banner{position:relative;overflow:hidden;border-radius:14px;border:1px solid rgba(255,255,255,.07)}
+    .story-banner img{width:100%;height:340px;object-fit:cover;display:block;filter:saturate(1.05)}
+    .story-label{
+      position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
+      border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:999px;font-weight:600
+    }
+    .story-overlay{
+      position:absolute;inset:0;display:flex;align-items:flex-end;
+      background:linear-gradient(0deg, rgba(0,0,0,.65) 0%, rgba(0,0,0,0) 55%);
+      color:#fff;padding:18px;opacity:0;transition:opacity .2s ease;
+    }
+    .story-overlay p{
+      margin:0;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);
+      padding:12px 14px;border-radius:12px;max-width:720px;font-size:15px;line-height:1.55
+    }
+    .story-banner:hover .story-overlay{opacity:1}
+    .story-banner.open .story-overlay{opacity:1} /* tap toggles on mobile */
+
+    /* sticky bottom footer */
+    .site-footer{
+      text-align:center;color:var(--muted);font-size:14px;
+      padding:18px 12px;margin-top:24px;border-top:1px solid rgba(255,255,255,.08)
+    }
 
     /* Lightbox */
     .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
     .lightbox.open{display:flex}
     .lightbox img{
-      width:auto;height:auto;
-      max-width:min(92vw,1200px); max-height:82vh;
-      border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)
+      width:auto;height:auto;max-width:min(92vw,1200px);max-height:82vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)
     }
     .lb-ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px}
     .lb-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
@@ -85,6 +108,7 @@
       <div class="status">CATBLOG_OK</div>
 
       <div class="grid">
+        <!-- About -->
         <div class="card half">
           <div class="inner">
             <h3>About Muffin</h3>
@@ -95,18 +119,36 @@
           </div>
         </div>
 
+        <!-- Photo Gallery (OLD IMAGE KEPT) -->
         <div class="card half">
           <div class="inner">
             <h3>Photo Gallery</h3>
           </div>
           <div id="gallery" class="gallery"></div>
         </div>
-      </div>
 
-      <p class="footer"> Made with ❤️ for Muffin</p>
+        <!-- NEW: 4 AM Story image with hover/tap overlay -->
+        <div class="story-row">
+          <div class="card story-card-img">
+            <a class="story-banner" id="storyBanner" href="#fouram" aria-label="Read Muffin’s 4 AM Story">
+              <!-- replace with your image file -->
+              <img src="4am.jpg" alt="Muffin at 4 AM, cozy night scene">
+              <div class="story-label">🌙 4 AM Story</div>
+              <div class="story-overlay">
+                <p>
+                  4 AM. The house is quiet. A soft thump—then tiny paws on the hallway runner.
+                  Muffin pauses at the window like the night is a show just for her.
+                  One stretch, one yawn, a sprint across the couch… and back to bed, purring like rain.
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
+  <!-- Lightbox -->
   <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
     <div class="lb-ui">
       <button id="prev" class="lb-btn" aria-label="Previous">⟨ Prev</button>
@@ -116,10 +158,13 @@
     <img id="lbimg" alt="Muffin photo" />
   </div>
 
+  <!-- sticky bottom footer -->
+  <footer class="site-footer">Made with ❤️ for Muffin</footer>
+
   <script>
-    /* Minimal config — put the image beside index.html or set IMG_PATH to "site/" etc. */
-    const IMAGES  = ["test.jpg"];  // add more: ["IMG_8793.png","muffin2.jpg",...]
-    const IMG_PATH = "";               // e.g. "site/" if files are in ./site/
+    /* Keep OLD IMAGE in gallery here */
+    const IMAGES  = ["test.jpg"];   // add more like ["test.jpg","muffin2.jpg"]
+    const IMG_PATH = "";            // folder path if not next to index.html
 
     const gallery = document.getElementById('gallery');
     const lb = document.getElementById('lightbox');
@@ -135,12 +180,11 @@
     function next(){ idx = (idx + 1) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
     function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
 
-    // Build gallery
+    // Build gallery (OLD IMAGE shows here)
     IMAGES.forEach((name,i)=>{
       const fig = document.createElement('figure'); fig.className = 'photo';
       const img = document.createElement('img');
-      img.loading = 'lazy';
-      img.decoding = 'async';
+      img.loading = 'lazy'; img.decoding = 'async';
       img.alt = 'Muffin photo';
       img.src = IMG_PATH + name;
       fig.appendChild(img);
@@ -159,7 +203,12 @@
       if(e.key==='ArrowRight') next();
       if(e.key==='ArrowLeft') prev();
     });
+
+    // Mobile: tap story image to toggle overlay (hover works on desktop)
+    const storyBanner = document.getElementById('storyBanner');
+    storyBanner.addEventListener('click', (e)=>{
+      if(!(e.ctrlKey || e.metaKey)) { e.preventDefault(); storyBanner.classList.toggle('open'); }
+    }, {passive:false});
   </script>
 </body>
 </html>
-
