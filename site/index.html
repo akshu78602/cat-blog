@@ -4,138 +4,129 @@
   <meta charset="utf-8" />
   <title>Muffin’s Cat Blog 🐱</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Muffin the cat — a cozy photo gallery." />
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0f1020; --card:#161938; --text:#e9edf3; --muted:#a7b0c8;
-      --accent:#8bd3ff; --ring:rgba(139,211,255,.35);
-      --radius:18px; --shadow:0 10px 28px rgba(0,0,0,.35);
+      /* Dark lilac palette (kept) */
+      --bg:#0f1020; --bg2:#1a1d3a;
+      --card:#171a2b; --border:rgba(255,255,255,.10);
+      --text:#e9edf3; --muted:#a7b0c8;
+      --accent:#9b87f5; --accent2:#c299ff;
+
+      --radius:20px; --shadow:0 16px 40px rgba(0,0,0,.45);
+      --maxw:1100px;
+      --font-body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --font-head:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
+
     *{box-sizing:border-box}
     html,body{
-      margin:0;
-      background:radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%), var(--bg);
-      color:var(--text); font:500 16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial
+      margin:0; color:var(--text);
+      background:
+        radial-gradient(900px 600px at 18% -8%, var(--bg2) 0%, transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      font-family:var(--font-body);
     }
 
-    /* sticky footer layout */
-    body{min-height:100vh; display:flex; flex-direction:column}
-    .wrap{flex:1}
+    /* ===== BACKGROUND ICONS (BIG + MORE VARIETY) ===== */
+    #bgIcons{
+      position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+    }
+    .icon{
+      position:absolute; transform:translate(-50%,-50%) rotate(0deg);
+      opacity:.14; /* overall transparency; randomized further in JS */
+      filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));
+      user-select:none;
+      will-change: transform;
+    }
 
-    img{max-width:100%;height:auto;display:block}
-    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
-    .wrap{max-width:980px;margin:56px auto;padding:0 18px}
+    /* ===== CONTENT ===== */
+    .wrap{position:relative; z-index:1; max-width:var(--maxw); margin:56px auto; padding:0 18px}
+    img{max-width:100%; height:auto; display:block; border-radius:var(--radius)}
+    a{color:var(--accent); text-decoration:none} a:hover{text-decoration:underline}
+
     .hero{
-      background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
-      border:1px solid rgba(255,255,255,.08); border-radius:calc(var(--radius) + 6px);
-      padding:28px 28px 8px; box-shadow:var(--shadow)
+      background:linear-gradient(135deg, rgba(155,135,245,.10), rgba(194,153,255,.06));
+      border:1px solid var(--border); border-radius:calc(var(--radius)+6px);
+      padding:28px; box-shadow:var(--shadow)
     }
-    .badge{display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.05);
-      border:1px solid rgba(255,255,255,.08); padding:6px 12px;border-radius:999px;color:var(--muted);
-      font-size:14px;margin-bottom:10px}
-    .title{font-size:clamp(28px,4vw,46px);line-height:1.1;margin:4px 0 10px}
-    .subtitle{color:var(--muted);margin:0 0 18px}
-    .status{display:inline-flex;gap:8px;align-items:center;background:#0e1326;border:1px dashed rgba(139,211,255,.45);
-      color:var(--accent);padding:8px 12px;border-radius:10px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:14px}
-    .grid{margin-top:22px;display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
-    .card{grid-column:span 12;background:var(--card);border:1px solid rgba(255,255,255,.06);
-      border-radius:var(--radius); box-shadow:var(--shadow);overflow:hidden}
+    .title{
+      font-family:var(--font-head); font-weight:700;
+      font-size:clamp(28px,4vw,44px); line-height:1.15;
+      margin:6px 0 10px; color:#fff
+    }
+    .subtitle{color:var(--muted); margin:0 0 18px}
+    .status{
+      display:inline-flex; gap:8px; align-items:center;
+      background:rgba(155,135,245,.14); border:1px dashed rgba(155,135,245,.45);
+      color:var(--accent); padding:8px 12px; border-radius:12px;
+      font-family:ui-monospace,Menlo,Consolas,monospace; font-size:14px
+    }
+
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:18px; margin-top:20px}
+    .card{
+      grid-column:span 12; background:rgba(23,26,43,.94); border:1px solid var(--border);
+      border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
+      backdrop-filter:saturate(110%) blur(3px);
+    }
     @media(min-width:720px){.card.half{grid-column:span 6}}
-    .inner{padding:18px}
-    h3{margin:0 0 8px;font-size:20px}
+    .inner{padding:20px}
+    h3{
+      font-family:var(--font-head); font-weight:700;
+      margin:0 0 8px; font-size:22px; color:var(--accent)
+    }
     .muted{color:var(--muted)}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:13px}
 
-    /* Gallery (old image kept) */
-    .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;padding:14px}
-    .photo{
-      position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.07);
-      background:#0b0d1a;cursor:pointer;display:flex;align-items:center;justify-content:center;
-      aspect-ratio:4/3;
-    }
-    .photo img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .25s ease;}
-    .photo:hover img{transform:scale(1.02)}
+    /* Gallery */
+    .gallery{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; padding:14px}
+    .photo{position:relative; border-radius:16px; overflow:hidden; background:#0e1226;
+      border:1px solid var(--border); box-shadow:0 6px 18px rgba(0,0,0,.35); aspect-ratio:4/3}
+    .photo img{width:100%; height:100%; object-fit:cover}
 
-    /* 4 AM Story tile — robust fitting */
-    .story-row{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:16px}
-    .story-card-img{grid-column:span 12}
-    .story-banner{position:relative;overflow:hidden;border-radius:14px;border:1px solid rgba(255,255,255,.07);background:#0b0d1a}
-    .story-banner .frame{position:relative; width:100%; aspect-ratio: 16 / 9; overflow:hidden;}
-    .story-banner img{
-      width:100%; height:100%;
-      transition:transform .25s ease, object-position .25s ease;
-      --focal-x:75%; --focal-y:70%;
-    }
-    /* modes */
-    .fit-cover img{object-fit:cover; object-position:center;}
-    .fit-contain img{
-      object-fit:contain; object-position:center;
-      background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.2));
-    }
-    .focal-cover img{
-      object-fit:cover;
-      object-position:var(--focal-x) var(--focal-y);
-    }
+    /* Story */
+    .story-card{grid-column:span 12}
+    .story-img{width:100%; border-bottom:1px solid var(--border)}
+    .story-img img{width:100%; height:auto; border-radius:var(--radius) var(--radius) 0 0}
+    .story-body{padding:24px}
+    .story-body h3{margin-top:0; font-family:var(--font-head); font-weight:700; font-size:24px; color:var(--accent2)}
+    .story-body p{margin:0; font-size:17px; line-height:1.75}
 
-    /* overlay */
-    .story-label{
-      position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);
-      border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:999px;font-weight:600
-    }
-    .story-overlay{
-      pointer-events:none;
-      position:absolute;inset:0;display:flex;align-items:flex-end;
-      background:linear-gradient(0deg, rgba(0,0,0,.65) 0%, rgba(0,0,0,0) 55%);
-      color:#fff;padding:18px;opacity:0;transition:opacity .2s ease;
-    }
-    .story-overlay p{
-      margin:0;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.18);
-      padding:12px 14px;border-radius:12px;max-width:720px;font-size:15px;line-height:1.55
-    }
-    .story-banner:hover .story-overlay{opacity:1}
-    .story-banner.open .story-overlay{opacity:1} /* tap toggles on mobile */
-
-    /* sticky bottom footer */
     .site-footer{
-      text-align:center;color:var(--muted);font-size:14px;
-      padding:18px 12px;margin-top:24px;border-top:1px solid rgba(255,255,255,.08)
+      text-align:center; color:var(--muted); font-size:14px;
+      padding:18px 12px; margin-top:24px; border-top:1px solid var(--border)
     }
-
-    /* Lightbox */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
-    .lightbox.open{display:flex}
-    .lightbox img{
-      width:auto;height:auto;max-width:min(92vw,1200px);max-height:82vh;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)
-    }
-    .lb-ui{position:fixed;inset:0;display:flex;align-items:center;justify-content:space-between;padding:20px}
-    .lb-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:12px;padding:10px 14px;cursor:pointer}
-    .lb-btn:hover{outline:2px solid var(--ring)}
-    .lb-close{position:absolute;top:16px;right:16px}
   </style>
 </head>
 <body>
+
+  <!-- Background icons layer -->
+  <div id="bgIcons" aria-hidden="true"></div>
+
   <div class="wrap">
     <section class="hero">
-      <div class="badge">🐾 Welcome to Muffin’s corner</div>
       <h1 class="title">Cat Blog is alive 🐱</h1>
       <p class="subtitle">Tiny static site. Fast, cozy, and purr-fect for photos.</p>
       <div class="status">CATBLOG_OK</div>
 
       <div class="grid">
-        <!-- About -->
+        <!-- About Muffin -->
         <div class="card half">
           <div class="inner">
             <h3>About Muffin</h3>
             <p class="muted">
-              <strong>Hello, my name is Muffin.</strong> I’m a majestic floof who loves sunbeams,
-              cardboard diplomacy, and stepping on keyboards at 3 AM. Enjoy my best photo below! 😺
+              <strong>Hello, my name is Muffin.</strong> I’m a fluffy gentleman with a royal attitude
+              and a dramatic flair for the absurd. I enjoy sunbeams, snacks, and the art of interrupting
+              my dad’s work calls by sitting directly on his keyboard. When I nap, I look like a cloud
+              that fell on the floor.
             </p>
           </div>
         </div>
 
-        <!-- Photo Gallery (old image kept) -->
+        <!-- Photo Gallery -->
         <div class="card half">
           <div class="inner">
             <h3>Photo Gallery</h3>
@@ -143,88 +134,113 @@
           <div id="gallery" class="gallery"></div>
         </div>
 
-        <!-- 4 AM Story tile with focal-cover tuned for this photo -->
-        <div class="story-row">
-          <div class="card story-card-img">
-            <a class="story-banner focal-cover" id="storyBanner"
-               href="#fouram" aria-label="Read Muffin’s 4 AM Story"
-               style="--focal-x:75%; --focal-y:70%;">
-              <div class="frame">
-                <img src="4am.jpg" alt="Muffin at 4 AM, cozy night scene" loading="lazy" decoding="async" />
-              </div>
-              <div class="story-label">🌙 4 AM Story</div>
-              <div class="story-overlay">
-                <p>
-                  4 AM. The house is quiet. A soft thump—then tiny paws on the hallway runner.
-                  Muffin pauses at the window like the night is a show just for her.
-                  One stretch, one yawn, a sprint across the couch… and back to bed, purring like rain.
-                </p>
-              </div>
-            </a>
+        <!-- 4 AM Story (full width under both) -->
+        <div class="card story-card">
+          <div class="story-img">
+            <img src="4am.jpg" alt="Muffin at 4 AM, mid chaos">
+          </div>
+          <div class="story-body">
+            <h3>🌙 Muffin’s 4 AM Story</h3>
+            <p>
+              Every night, as the clock strikes 4 AM, Muffin begins his sacred ritual.<br>
+              Step 1: launch off the bed like a furry missile. Step 2: zoom through the hallway with thunderous paws.<br>
+              Step 3: knock over something that definitely wasn’t in the way an hour ago.
+              <br><br>
+              Dad jolts awake, heart pounding, convinced the house is haunted. Meanwhile, Muffin freezes mid-run —
+              eyes wide, tail puffed — like a tiny ghost who just remembered rent was due.
+              <br><br>
+              A distant sound? <strong>Clearly a threat. Must investigate immediately.</strong><br>
+              A flicker of light? <strong>An intruder! Or worse — a moth.</strong><br>
+              Muffin goes full detective mode: slow crawl, dramatic tail twitch, then a 0-to-100 leap worthy of an
+              action-movie trailer. He lands with the grace of a potato, crashes into a shoebox, and sprints away like
+              he meant to do that.
+              <br><br>
+              Dad shoots upright in bed, convinced a burglar just tripped the alarm. Meanwhile Muffin stands in the hallway,
+              pupils the size of saucers, looking proud of his successful “security sweep.” Mission complete. House secure.
+              Human traumatized.
+              <br><br>
+              Five minutes later, the fearless warrior curls up on the floor, purring like a tiny engine, leaving his poor
+              human wide-eyed, questioning his life choices — and Googling <em>“how to stop cat midnight parkour.”</em>
+            </p>
           </div>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- Lightbox -->
-  <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
-    <div class="lb-ui">
-      <button id="prev" class="lb-btn" aria-label="Previous">⟨ Prev</button>
-      <button id="next" class="lb-btn" aria-label="Next">Next ⟩</button>
-      <button id="close" class="lb-btn lb-close" aria-label="Close">✕</button>
-    </div>
-    <img id="lbimg" alt="Muffin photo" />
-  </div>
-
-  <!-- sticky bottom footer -->
   <footer class="site-footer">Made with ❤️ for Muffin</footer>
 
   <script>
-    /* Gallery (old image kept) */
-    const IMAGES  = ["test.jpg"];  // add more like ["test.jpg","muffin2.jpg"]
-    const IMG_PATH = "";
-
+    /* ---------- GALLERY ---------- */
+    const IMAGES = ["test.jpg"]; // add more like ["test.jpg","muffin2.jpg"]
     const gallery = document.getElementById('gallery');
-    const lb = document.getElementById('lightbox');
-    const lbimg = document.getElementById('lbimg');
-    const btnPrev = document.getElementById('prev');
-    const btnNext = document.getElementById('next');
-    const btnClose = document.getElementById('close');
-
-    let idx = 0;
-    function openLB(i){ idx = i; lbimg.src = IMG_PATH + IMAGES[idx]; lb.classList.add('open'); }
-    function closeLB(){ lb.classList.remove('open'); lbimg.removeAttribute('src'); }
-    function next(){ idx = (idx + 1) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
-    function prev(){ idx = (idx - 1 + IMAGES.length) % IMAGES.length; lbimg.src = IMG_PATH + IMAGES[idx]; }
-
-    IMAGES.forEach((name,i)=>{
-      const fig = document.createElement('figure'); fig.className = 'photo';
+    IMAGES.forEach(name => {
+      const fig = document.createElement('figure');
+      fig.className = 'photo';
       const img = document.createElement('img');
-      img.loading = 'lazy'; img.decoding = 'async';
+      img.src = name;
       img.alt = 'Muffin photo';
-      img.src = IMG_PATH + name;
       fig.appendChild(img);
-      fig.addEventListener('click', ()=>openLB(i));
       gallery.appendChild(fig);
     });
 
-    btnNext.addEventListener('click', next);
-    btnPrev.addEventListener('click', prev);
-    btnClose.addEventListener('click', closeLB);
-    lb.addEventListener('click', (e)=>{ if(e.target===lb) closeLB(); });
-    document.addEventListener('keydown', (e)=>{
-      if(!lb.classList.contains('open')) return;
-      if(e.key==='Escape') closeLB();
-      if(e.key==='ArrowRight') next();
-      if(e.key==='ArrowLeft') prev();
-    });
+    /* ---------- BACKGROUND ICONS (BIG + MORE) ---------- */
+    (function drawIcons(){
+      const layer = document.getElementById('bgIcons');
 
-    // Mobile: tap story image to toggle overlay (hover works on desktop)
-    const storyBanner = document.getElementById('storyBanner');
-    storyBanner.addEventListener('click', (e)=>{
-      if(!(e.ctrlKey || e.metaKey)) { e.preventDefault(); storyBanner.classList.toggle('open'); }
-    }, {passive:false});
+      // Easy knobs to tweak:
+      const COUNT_DESKTOP = 140;             // how many icons on desktop
+      const COUNT_MOBILE  = 90;              // how many icons on small screens
+      const SIZE_MIN = 28;                   // minimum size in px
+      const SIZE_MAX = 68;                   // maximum size in px (bigger paws!)
+      const ROT_MAX  = 40;                   // +/- rotation in degrees
+      const BASE_OPACITY_MIN = 0.10;         // min opacity
+      const BASE_OPACITY_MAX = 0.20;         // max opacity
+
+      // Icon set + weights (more paws than others)
+      const ICONS   = ['🐾','🐟','🧶','✨'];
+      const WEIGHTS = [0.6, 0.18, 0.14, 0.08];
+
+      function pickWeighted(){
+        const r = Math.random();
+        let acc = 0;
+        for(let i=0;i<ICONS.length;i++){ acc += WEIGHTS[i]; if(r <= acc) return ICONS[i]; }
+        return ICONS[0];
+      }
+
+      function populate(){
+        const W = window.innerWidth, H = window.innerHeight;
+        const count = (W < 720 ? COUNT_MOBILE : COUNT_DESKTOP);
+
+        layer.innerHTML = "";
+        for(let i=0;i<count;i++){
+          const span = document.createElement('span');
+          span.className = 'icon';
+          span.textContent = pickWeighted();
+
+          const x = Math.random()*W;
+          const y = Math.random()*H;
+
+          const size = SIZE_MIN + Math.random()*(SIZE_MAX - SIZE_MIN);
+          const rot  = -ROT_MAX + Math.random()*(ROT_MAX*2);
+          const op   = BASE_OPACITY_MIN + Math.random()*(BASE_OPACITY_MAX-BASE_OPACITY_MIN);
+
+          span.style.left = x + 'px';
+          span.style.top  = y + 'px';
+          span.style.fontSize = size.toFixed(0) + 'px';
+          span.style.opacity  = op.toFixed(2);
+          span.style.transform = `translate(-50%,-50%) rotate(${rot.toFixed(1)}deg)`;
+
+          layer.appendChild(span);
+        }
+      }
+
+      populate();
+      window.addEventListener('resize', () => {
+        clearTimeout(window.__iconsTO);
+        window.__iconsTO = setTimeout(populate, 120);
+      });
+    })();
   </script>
 </body>
 </html>
