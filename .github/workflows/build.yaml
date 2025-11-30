@@ -46,7 +46,7 @@ jobs:
           name: qa-tfplan
           path: |
             tfplan
-            .terraform.lock.hcl
+
 
   qa-apply:
     needs: qa-plan
@@ -68,7 +68,7 @@ jobs:
 
       - name: Terraform Intialization
         working-directory: .
-        run: terraform init -lockfile=readonly
+        run: terraform init
       
 
       # - name: Donwnload Artifacts
