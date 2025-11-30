@@ -18,7 +18,7 @@ to = module.ecr_image.aws_ecr_repository.repo
 
 module "s3_bucket"{
 
-source ="./tf_modules/ecr"
+source = "./tf_modules/s3"
 name =var.name
 acl = var.acl
 
