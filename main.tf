@@ -15,3 +15,13 @@ to = module.ecr_image.aws_ecr_repository.repo
 
 
 }
+
+module "s3_bucket"{
+
+source ="./tf_modules/ecr"
+name =var.name
+acl = var.acl
+
+
+
+}
