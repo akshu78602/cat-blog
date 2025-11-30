@@ -55,10 +55,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: qa-tfplan
-          path: cat-blog
 
       - name: Terraform Intialization
-        working-directory: ./cat-blog
         run: terraform init
       
 
