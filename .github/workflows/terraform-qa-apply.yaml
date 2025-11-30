@@ -1,0 +1,21 @@
+name: Terraform QA Apply Plan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-qa-apply:
+    runs-on: ubuntu-latest
+    enviornments: qa
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v4
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Run qa TF Plan[QA]
+        run: terraform plan -var-file="enviornments/qa.tfvars"
+
+      - name: Terraform Apply
+        run:  terraform apply -var-file="enviornments/qa.tfvars"
