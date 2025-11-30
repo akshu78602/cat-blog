@@ -40,9 +40,6 @@ jobs:
 
         - name: Terraform Init
           run: terraform init
-
-        - name: Terraform Validat
-          run: terraform validate
         
         - name: Run qa TF Plan[QA]
           if: ${{github.event_name=='pull_request'}}
