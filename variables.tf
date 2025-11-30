@@ -21,3 +21,18 @@ variable "scan_image_on_push" {
   description = "scans images on push for vurnabilities"
 
 }
+
+variable "bucket_name" {
+
+    type= string
+
+
+}
+
+variable "acl"{
+
+    type= string
+    default= "private"
+
+}
+
