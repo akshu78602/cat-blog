@@ -1,0 +1,33 @@
+name: Terraform QA plan(Manual Run)
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  qa-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Setup Aws Authorization
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::424851482428:role/abc"
+          aws-region: us-east-1
+
+      - name: Terraform Intialization
+        terraform-working-directory: /
+        run: terraform init
+      
+      - name: Run qa TF Plan
+        terraform-working-directory: /
+        run: terraform plan

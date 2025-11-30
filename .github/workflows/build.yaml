@@ -8,7 +8,6 @@ on:
     branches:
       - master
 
-  #  workflow_dispatch:
 
 env:
   terraform-working-dirctory: infra/ecr
@@ -24,79 +23,57 @@ jobs:
         - name: checkout
           uses: actions/checkout@v4
 
-
-        - name: generate oidc token
-          shell: bash 
-          run: |
-            set -euo pipefail
-
-            # Request a GitHub OIDC token with AWS audience
-            RESP="$(curl -fsS \
-              -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
-              "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")"
-
-            # Extract JWT
-            JWT="$(echo "$RESP" | jq -r '.value')"
-
-            # Decode base64url payload safely
-            PAYLOAD_B64="$(echo "$JWT" | cut -d. -f2)"
-            PAD=$(( (4 - ${#PAYLOAD_B64} % 4) % 4 ))
-            printf -v PADSTR "%*s" "$PAD" ""; PADSTR="${PADSTR// /=}"
-            echo "${PAYLOAD_B64}${PADSTR}" \
-              | tr '_-' '/+' \
-              | base64 -d \
-              | jq '{iss,aud,sub,exp}'
-
         - name: call aws via oidc
           uses: aws-actions/configure-aws-credentials@v4
           with:
               role-to-assume: "arn:aws:iam::424851482428:role/abc"
               aws-region: us-east-1
+
         - name: test-who-am-i
           run: aws sts get-caller-identity
 
-      #------------------------------- TERRAFORM SETUP----------------------------------------
-        - name: Prepare terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: "1.1.7"
+      # #------------------------------- TERRAFORM SETUP----------------------------------------
+      #   - name: Prepare terraform
+      #     uses: hashicorp/setup-terraform@v3
+      #     with:
+      #       terraform_version: "1.1.7"
 
-        - name: Terraform Init
-          working-directory: ${{ env.terraform-working-dirctory }}
-          run: terraform init -input=false
+      #   - name: Terraform Init
+      #     working-directory: ${{ env.terraform-working-dirctory }}
+      #     run: terraform init -input=false
 
-        - name: Terraform Validate
-          working-directory: ${{ env.terraform-working-dirctory }}
-          run: terraform validate
+      #   - name: Terraform Validate
+      #     working-directory: ${{ env.terraform-working-dirctory }}
+      #     run: terraform validate
         
-        - name: run terraform plan[PR ONLY]
-          if: ${{github.event_name=='pull_request'}}
-          working-directory: ${{ env.terraform-working-dirctory }}
-          run: terraform plan -input=false
+      #   - name: Run qa TF Plan[PR ONLY]
+      #     if: ${{github.event_name=='pull_request'}}
+      #     working-directory: ${{ env.terraform-working-dirctory }}
+      #     run: terraform plan -input=false
 
-        - name: Terraform Plan (push only; detect changes)
-          id: plan
-          if: ${{ github.event_name == 'push' }}
-          working-directory: ${{ env.TF_WORKDIR }}
-          run: |
-            set +e
-            terraform plan -input=false -no-color -detailed-exitcode -out=tfplan
-            code=$?
-            echo "exit_code=$code" >> $GITHUB_OUTPUT
-            if [ $code -gt 2 ]; then exit $code; fi
-            exit 0
+        # - name: Terraform Plan (push only; detect changes)
+        #   id: plan
+        #   if: ${{ github.event_name == 'push' }}
+        #   working-directory: ${{ env.TF_WORKDIR }}
+        #   run: |
+        #     set +e
+        #     terraform plan -input=false -no-color -detailed-exitcode -out=tfplan
+        #     code=$?
+        #     echo "exit_code=$code" >> $GITHUB_OUTPUT
+        #     if [ $code -gt 2 ]; then exit $code; fi
+        #     exit 0
 
-        - name: Terraform Apply (only if changes)
-          if: ${{ steps.plan.outputs.exit_code == '2' }}
-          working-directory: ${{ env.TF_WORKDIR }}
-          run: terraform apply -input=false -auto-approve tfplan
+        # - name: Terraform Apply (only if changes)
+        #   if: ${{ steps.plan.outputs.exit_code == '2' }}
+        #   working-directory: ${{ env.TF_WORKDIR }}
+        #   run: terraform apply -input=false -auto-approve tfplan
 
-        - name: Login to ECR
-          run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
+        # - name: Login to ECR
+        #   run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
 
-        - name: Build, tag, and push
-          run: |
-            docker build -t cat-blogs .
-            docker tag cat-blogs:latest 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
-            docker push 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
+        # - name: Build, tag, and push
+        #   run: |
+        #     docker build -t cat-blogs .
+        #     docker tag cat-blogs:latest 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
+        #     docker push 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
 
