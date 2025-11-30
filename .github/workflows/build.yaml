@@ -38,7 +38,7 @@ jobs:
         run: terraform plan -var-file="enviornments/qa.tfvars" -out=tfplan
 
       - name: Print all the files
-        run: ls -la cat-blog
+        run: ls -la ./cat-blog
 
       - name: Artifactory upload
         uses: actions/upload-artifact@v4
