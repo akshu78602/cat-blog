@@ -6,7 +6,7 @@ on:
 jobs:
   terraform-qa-apply:
     runs-on: ubuntu-latest
-    enviornments: qa
+    enviornment: qa
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
