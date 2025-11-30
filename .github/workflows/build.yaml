@@ -35,7 +35,6 @@ jobs:
         run: terraform init
       
       - name: Run qa TF Plan
-        working-directory: ./cat-blog
         run: terraform plan -var-file="enviornments/qa.tfvars" -out=tfplan
 
       - name: Artifactory upload
