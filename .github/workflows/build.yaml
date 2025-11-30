@@ -58,15 +58,17 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
+      
+
+      - name: Terraform Intialization
+        run: terraform init -lockfile=readonly
+      
 
       - name: Donwnload Artifacts
         uses: actions/download-artifact@v4
         with:
           name: qa-tfplan
 
-      - name: Terraform Intialization
-        run: terraform init -lockfile=readonly
-      
 
       - name : terrafor Apply
         run: terraform apply "tfplan"
