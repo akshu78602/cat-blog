@@ -46,7 +46,7 @@ jobs:
         
         - name: Run qa TF Plan[QA]
           if: ${{github.event_name=='pull_request'}}
-          run: terraform plan
+          run: terraform plan -var-file="enviornments/qa.tfvars"
 
         # - name: Terraform Plan (push only; detect changes)
         #   id: plan
