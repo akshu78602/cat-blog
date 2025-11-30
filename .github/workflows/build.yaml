@@ -51,6 +51,9 @@ jobs:
   qa-apply:
     needs: qa-plan
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     environment: qa
     steps:
 
