@@ -44,7 +44,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qa-tfplan
-          path: tfplan
+          path: |
+            tfplan
+            .terraform.lock.hcl
 
   qa-apply:
     needs: qa-plan
@@ -63,7 +65,7 @@ jobs:
           name: qa-tfplan
 
       - name: Terraform Intialization
-        run: terraform init
+        run: terraform init -lockfile=readonly
       
 
       - name : terrafor Apply
