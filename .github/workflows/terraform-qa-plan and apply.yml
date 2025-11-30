@@ -56,3 +56,4 @@ jobs:
       - name : terrafor Apply
         run: terraform apply "tfplan"
         working-directory: ./cat-blog
+        
