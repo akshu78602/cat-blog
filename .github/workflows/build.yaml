@@ -54,6 +54,10 @@ jobs:
     environment: qa
     steps:
 
+      - name: checkout-repo
+        uses: actions/checkout@v4
+      
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
