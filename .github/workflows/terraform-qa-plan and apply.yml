@@ -30,13 +30,13 @@ jobs:
       
       - name: Run qa TF Plan
         working-directory: ./cat-blog
-        run: terraform plan
+        run: terraform plan -var-file="enviornments/qa.tfvars" -out=tfplan
 
       - name: Artifactory upload
         uses: actions/upload-artifact@v4
         with:
           name: qa-tfplan
-          path: terraform/tfplan
+          path: cat-blog/tfplan
 
   qa-apply:
     needs: qa-plan
@@ -44,8 +44,16 @@ jobs:
     environment: qa
     steps:
       - name: Donwnload Artifacts
-        uses: actions/Donwnload-artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: qa-tfplan
+          path: cat-blog
+
+      - name: Terraform Intialization
+        working-directory: ./cat-blog
+        run: terraform init
+      
+
       - name : terrafor Apply
-        run: terraform apply "terraform/tfplan""
+        run: terraform apply "tfplan"
+        working-directory: ./cat-blog
