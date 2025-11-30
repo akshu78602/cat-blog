@@ -1,4 +1,4 @@
-name: build and ECR operation
+name: build
 
 on:
   push:
@@ -10,7 +10,7 @@ on:
 
 
 env:
-  terraform-working-dirctory: infra/ecr
+  terraform-working-dirctory: ./cat-blog
 
 jobs:
     build:
@@ -33,23 +33,23 @@ jobs:
           run: aws sts get-caller-identity
 
       # #------------------------------- TERRAFORM SETUP----------------------------------------
-      #   - name: Prepare terraform
-      #     uses: hashicorp/setup-terraform@v3
-      #     with:
-      #       terraform_version: "1.1.7"
+        - name: Prepare terraform
+          uses: hashicorp/setup-terraform@v3
+          with:
+            terraform_version: "1.1.7"
 
-      #   - name: Terraform Init
-      #     working-directory: ${{ env.terraform-working-dirctory }}
-      #     run: terraform init -input=false
+        - name: Terraform Init
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform init
 
-      #   - name: Terraform Validate
-      #     working-directory: ${{ env.terraform-working-dirctory }}
-      #     run: terraform validate
+        - name: Terraform Validate
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform validate
         
-      #   - name: Run qa TF Plan[PR ONLY]
-      #     if: ${{github.event_name=='pull_request'}}
-      #     working-directory: ${{ env.terraform-working-dirctory }}
-      #     run: terraform plan -input=false
+        - name: Run qa TF Plan[QA]
+          if: ${{github.event_name=='pull_request'}}
+          working-directory: ${{ env.terraform-working-dirctory }}
+          run: terraform plan
 
         # - name: Terraform Plan (push only; detect changes)
         #   id: plan

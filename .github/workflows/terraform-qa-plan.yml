@@ -25,9 +25,9 @@ jobs:
           aws-region: us-east-1
 
       - name: Terraform Intialization
-        terraform-working-directory: /
+        terraform-working-directory: ./cat-blog
         run: terraform init
       
       - name: Run qa TF Plan
-        terraform-working-directory: /
+        terraform-working-directory: ./cat-blog
         run: terraform plan
