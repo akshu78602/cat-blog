@@ -1,7 +1,7 @@
 module "s3_bucket" {
   source = "terraform-aws-modules/s3-bucket/aws"
 
-  bucket = var.name
+  bucket = var.bucket_name
   acl    = var.acl
 
 
