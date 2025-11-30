@@ -63,11 +63,13 @@ jobs:
         run: pwd      
 
       - name: Terraform Intialization
+        working-directory: .
         run: terraform init -lockfile=readonly
       
 
       - name: Donwnload Artifacts
         uses: actions/download-artifact@v4
+        working-directory: .
         with:
           name: qa-tfplan
 
