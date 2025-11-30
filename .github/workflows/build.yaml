@@ -1,4 +1,4 @@
-name: build and deploy
+name: qa plan and apply
 
 on:
   push:
@@ -67,12 +67,12 @@ jobs:
         run: terraform init -lockfile=readonly
       
 
-      - name: Donwnload Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: qa-tfplan
+      # - name: Donwnload Artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: qa-tfplan
 
 
-      - name : terrafor Apply
-        run: terraform apply "tfplan"
-        working-directory: .
+      # - name : terrafor Apply
+      #   run: terraform apply "tfplan"
+      #   working-directory: .
