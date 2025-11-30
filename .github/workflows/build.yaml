@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: qa-tfplan
-          path: cat-blog/tfplan
+          path: tfplan
 
   qa-apply:
     needs: qa-plan
