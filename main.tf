@@ -22,6 +22,4 @@ source = "./tf_modules/s3"
 bucket_name =var.bucket_name
 acl = var.acl
 
-
-
 }
