@@ -63,7 +63,6 @@ jobs:
         run: pwd      
 
       - name: Terraform Intialization
-        workflow_directory: .
         run: terraform init -lockfile=readonly
       
 
