@@ -6,7 +6,7 @@ on:
 jobs:
   terraform-qa-apply:
     runs-on: ubuntu-latest
-    enviornment: qa
+    environnment: qa
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
@@ -15,7 +15,7 @@ jobs:
         run: terraform init
 
       - name: Run qa TF Plan[QA]
-        run: terraform plan -var-file="enviornments/qa.tfvars"
+        run: terraform plan -var-file="environments/qa.tfvars"
 
       - name: Terraform Apply
-        run:  terraform apply -var-file="enviornments/qa.tfvars"
+        run:  terraform apply -var-file="environments/qa.tfvars"
