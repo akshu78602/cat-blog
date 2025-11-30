@@ -1,4 +1,4 @@
-name: build
+name: build and deploy
 
 on:
   push:
@@ -10,64 +10,54 @@ on:
 
 
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      permissions:
-          id-token: write
-          contents: read
+  qa-plan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: checkout-repo
+        uses: actions/checkout@v4
       
-      steps:
-        - name: checkout
-          uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-        - name: call aws via oidc
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-              role-to-assume: "arn:aws:iam::424851482428:role/abc"
-              aws-region: us-east-1
+      - name: Setup Aws Authorization
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::424851482428:role/abc"
+          aws-region: us-east-1
 
-        - name: test-who-am-i
-          run: aws sts get-caller-identity
+      - name: Terraform Intialization
+        run: terraform init
+      
+      - name: Run qa TF Plan
+        working-directory: ./cat-blog
+        run: terraform plan -var-file="enviornments/qa.tfvars" -out=tfplan
 
-      # #------------------------------- TERRAFORM SETUP----------------------------------------
-        - name: Prepare terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: "~>1.5.7"
+      - name: Artifactory upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-tfplan
+          path: cat-blog/tfplan
 
-        - name: Print Terraform
-          run: terraform version
+  qa-apply:
+    needs: qa-plan
+    runs-on: ubuntu-latest
+    environment: qa
+    steps:
+      - name: Donwnload Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-tfplan
+          path: cat-blog
 
-        - name: Terraform Init
-          run: terraform init
-        
-        - name: Run qa TF Plan[QA]
-          if: ${{github.event_name=='pull_request'}}
-          run: terraform plan -var-file="enviornments/qa.tfvars"
+      - name: Terraform Intialization
+        working-directory: ./cat-blog
+        run: terraform init
+      
 
-        # - name: Terraform Plan (push only; detect changes)
-        #   id: plan
-        #   if: ${{ github.event_name == 'push' }}
-        #   working-directory: ${{ env.TF_WORKDIR }}
-        #   run: |
-        #     set +e
-        #     terraform plan -input=false -no-color -detailed-exitcode -out=tfplan
-        #     code=$?
-        #     echo "exit_code=$code" >> $GITHUB_OUTPUT
-        #     if [ $code -gt 2 ]; then exit $code; fi
-        #     exit 0
-
-        # - name: Terraform Apply (only if changes)
-        #   if: ${{ steps.plan.outputs.exit_code == '2' }}
-        #   working-directory: ${{ env.TF_WORKDIR }}
-        #   run: terraform apply -input=false -auto-approve tfplan
-
-        # - name: Login to ECR
-        #   run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
-
-        # - name: Build, tag, and push
-        #   run: |
-        #     docker build -t cat-blogs .
-        #     docker tag cat-blogs:latest 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
-        #     docker push 424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:latest
-
+      - name : terrafor Apply
+        run: terraform apply "tfplan"
+        working-directory: ./cat-blog
