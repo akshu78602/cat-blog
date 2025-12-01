@@ -1,8 +1,3 @@
-Here’s a clean, professional **GitHub README summary** for your **LittleCat blog**, describing how it is built, deployed, and the technologies involved.
-You can copy-paste directly into your repo’s README.md.
-
----
-
 # 🐱 LittleCat Blog — Architecture & Deployment Overview
 
 **LittleCat** is a lightweight, containerized static website built to showcase Muffin the cat 🐈.
