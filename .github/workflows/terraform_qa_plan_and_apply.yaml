@@ -25,14 +25,12 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      # Run PLAN using reusable workflow
       - name: Run Terraform Plan
         uses: ./.github/workflows/terraform_commons.yml
         with:
           action: "plan"
           tf_var_file: "enviornments/qa.tfvars"
 
-      # Upload tfplan file
       - name: Upload Terraform Plan Artifact
         uses: actions/upload-artifact@v4
         with:
