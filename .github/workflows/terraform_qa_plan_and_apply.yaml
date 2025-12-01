@@ -3,7 +3,7 @@ name: qa plan and apply
 on:
   push:
     branches:
-      - '**'
+      - master
   pull_request:
     branches:
       - master
@@ -28,4 +28,4 @@ jobs:
     with:
       action: "apply"
       tf_var_file: "enviornments/qa.tfvars"
-      
+
