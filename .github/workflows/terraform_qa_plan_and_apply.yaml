@@ -16,7 +16,7 @@ permissions:
 jobs:
 
   qa-plan:
-    uses: ./.github/workflows/terraform_commons.yml
+    uses: ./.github/workflows/terraform_commons.yml@master
     with:
       action: "plan"
       tf_var_file: "enviornments/qa.tfvars"
@@ -28,8 +28,8 @@ jobs:
     environment: qa
     
     steps:
-      - name: apple qa tf
-        uses: ./.github/workflows/terraform_commons.yml
+      - name: Apply qa tf
+        uses: ./.github/workflows/terraform_commons.yml@master
         with:
           action: "apply"
           tf_var_file: "enviornments/qa.tfvars"
