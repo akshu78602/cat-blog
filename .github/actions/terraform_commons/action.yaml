@@ -7,41 +7,34 @@ inputs:
   tf_var_file:
     required: false
 
-permissions:
-  id-token: write
-  contents: read
-
-
 runs:
   using: "composite"
   steps:
 
-    # Checkout repository
-    - name: Checkout Repo
-      uses: actions/checkout@v4
+    - name: Set working directory
+      run: echo "WORKSPACE=${GITHUB_WORKSPACE}" 
+      shell: bash
 
-    # Setup Terraform
     - uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: 1.5.7
 
-    # Configure AWS credentials
     - uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: "arn:aws:iam::424851482428:role/abc"
         aws-region: us-east-1
 
-    # Terraform Init
     - name: Terraform Init
       run: terraform init
       shell: bash
+      working-directory: ${{ github.workspace }}
 
-    # Terraform Plan / Apply
-    - name: Terraform Run
+    - name: Run Terraform
+      shell: bash
+      working-directory: ${{ github.workspace }}
       run: |
         if [[ "${{ inputs.action }}" == "plan" ]]; then
           terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
         elif [[ "${{ inputs.action }}" == "apply" ]]; then
           terraform apply "tfplan"
         fi
-      shell: bash
