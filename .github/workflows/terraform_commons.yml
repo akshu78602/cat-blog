@@ -1,4 +1,9 @@
-name: terraform-commons
+name: Terraform Common
+
+permissions:
+  id-token: write
+  contents: read
+
 
 on:
   workflow_call:
@@ -7,7 +12,7 @@ on:
         required: true
         type: string
       tf_var_file:
-        required: true
+        required: false
         type: string
 
 jobs:
@@ -18,30 +23,27 @@ jobs:
       contents: read
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::424851482428:role/abc"
           aws-region: us-east-1
 
-      - name: Terraform Init
-        run: terraform init
+      - run: terraform init
 
-      - name: Terraform Run
+      - name: Run Terraform
+        shell: bash
         run: |
           if [[ "${{ inputs.action }}" == "plan" ]]; then
             terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
           elif [[ "${{ inputs.action }}" == "apply" ]]; then
             terraform apply "tfplan"
           else
-            echo "Invalid action"
+            echo "Unknown action"
             exit 1
           fi
