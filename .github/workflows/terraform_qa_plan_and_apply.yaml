@@ -1,5 +1,9 @@
 name: qa plan and apply
 
+permissions:
+  id-token: write
+  contents: read
+
 on:
   push:
     branches:
@@ -8,28 +12,19 @@ on:
     branches:
       - master
 
-permissions:
-  id-token: write
-  contents: read
-
-
 jobs:
 
   qa-plan:
     uses: ./.github/workflows/terraform_commons.yml
     with:
       action: "plan"
-      tf_var_file: "enviornments/qa.tfvars"
+      tf_var_file: "environments/qa.tfvars"
 
   qa-apply:
     needs: qa-plan
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest  
     environment: qa
-    
-    steps:
-      - name: Apply qa tf
-        uses: ./.github/workflows/terraform_commons.yml
-        with:
-          action: "apply"
-          tf_var_file: "enviornments/qa.tfvars"
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    uses: ./.github/workflows/terraform_commons.yml
+    with:
+      action: "apply"
+      tf_var_file: "environments/qa.tfvars"
