@@ -11,7 +11,7 @@ on:
 jobs:
 
   qa-plan:
-    uses: ./.github/workflows/terraform_common.yml
+    uses: ./.github/workflows/terraform_commons.yml
     with:
       action: "plan"
       tf_var_file: "qa.tfvars"
@@ -24,7 +24,7 @@ jobs:
     
     steps:
       - name: apple qa tf
-        uses: ./.github/workflows/terraform_common.yml
+        uses: ./.github/workflows/terraform_commons.yml
         with:
           action: "apply"
           tf_var_file: "qa.tfvars"
