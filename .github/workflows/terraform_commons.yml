@@ -37,9 +37,9 @@ jobs:
 
         - name: Run Terraform
           run: |
-            if [ "${{inputs.action}}" == "plan" ]; then
-              terraform plan -var-file="${{inputs.tf_var_file}}}" -out=tfplan
-            elif [ "${{inputs.action}}" == "apply" ]; then
+            if [ "${{ inputs.action }}" == "plan" ]; then
+              terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
+            elif [ "${{ inputs.action }}" == "apply" ]; then
               terraform apply "tfplan"
             else
                 echo "No action specified"

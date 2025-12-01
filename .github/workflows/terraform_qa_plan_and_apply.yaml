@@ -14,7 +14,7 @@ jobs:
     uses: ./github/workflows/terraform_common.yml
     with:
       action: "plan"
-      tf-var-file: "qa.tfvars"
+      tf_var_file: "qa.tfvars"
 
 
   qa-apply:
@@ -24,4 +24,4 @@ jobs:
     uses: ./github/workflows/terraform_common.yml
     with:
       action: "apply"
-      tf-var-file: "qa.tfvars"
+      tf_var_file: "qa.tfvars"
