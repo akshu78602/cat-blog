@@ -42,5 +42,6 @@ jobs:
 
       - name: Terraform Apply
         uses: ./.github/actions/terraform_commons
+        with:
           action: "apply"
           tf_var_file: "enviornments/qa.tfvars"
