@@ -7,6 +7,11 @@ inputs:
   tf_var_file:
     required: false
 
+permissions:
+  id-token: write
+  contents: read
+
+
 runs:
   using: "composite"
   steps:
