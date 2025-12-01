@@ -20,7 +20,7 @@ jobs:
   qa-apply:
     needs: qa-plan
     environment: qa
-    if: ${{ github.event_name == "push" }}
+    if: "${{ github.event_name  == 'push' }}"
     uses: ./.github/workflows/terraform_common.yml
     with:
       action: "apply"
