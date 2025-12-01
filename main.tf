@@ -16,10 +16,19 @@ to = module.ecr_image.aws_ecr_repository.repo
 
 }
 
-module "s3_bucket"{
 
-source = "./tf_modules/s3"
-bucket_name =var.bucket_name
-acl = var.acl
+module "iam_oidc" {
+  source= "./tf_modules/iam"
+  role_name =  var.role_name
+  policy_name= var.policy_name
+  repo_name= var.repo_name
+  repo_owner= var.repo_owner
 
+
+
+}
+
+import {
+id =  "abc"
+to = module.iam_oidc.aws_iam_role.role
 }

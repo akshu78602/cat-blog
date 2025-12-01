@@ -3,3 +3,7 @@ repo_types= "MUTABLE"
 scan_image_on_push= true
 bucket_name= "qa-catblog-tfstate"
 acl= "private"
+repo_name= "cat-blog"
+repo_owner= "akshu78602"
+policy_name= "test"
+role_name= "abc"
