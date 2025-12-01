@@ -33,6 +33,13 @@ id =  "abc"
 to = module.iam_oidc.aws_iam_role.role
 }
 
+module "identity_provider" {
+
+  source = "./tf_modules/iam"
+  
+
+}
+
 import
 {
 
