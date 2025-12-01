@@ -23,13 +23,9 @@ jobs:
 
   qa-apply:
     needs: qa-plan
+    uses: ./.github/workflows/terraform_commons.yml
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest  
-    environment: qa
-    
-    steps:
-      - name: apple qa tf
-        uses: ./.github/workflows/terraform_commons.yml
-        with:
-          action: "apply"
-          tf_var_file: "enviornments/qa.tfvars"
+    with:
+      action: "apply"
+      tf_var_file: "enviornments/qa.tfvars"
+      
