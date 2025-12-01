@@ -11,7 +11,7 @@ on:
 jobs:
 
   qa-plan:
-    uses: akshu78602/cat-blog/.github/workflows/terraform_commons.yml@master
+    uses: ./.github/workflows/terraform_commons.yml@master
     with:
       action: "plan"
       tf_var_file: "environments/qa.tfvars"
@@ -19,7 +19,7 @@ jobs:
   qa-apply:
     needs: qa-plan
     if: ${{ github.event_name == 'push' }}
-    uses: akshu78602/cat-blog/.github/workflows/terraform_commons.yml@master
+    uses: ./.github/workflows/terraform_commons.yml@master
     with:
       action: "apply"
       tf_var_file: "qa.tfvars"
