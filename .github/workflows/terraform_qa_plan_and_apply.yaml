@@ -8,20 +8,19 @@ on:
     branches:
       - master
 
-
 jobs:
+
   qa-plan:
     uses: ./.github/workflows/terraform_common.yml
     with:
       action: "plan"
       tf_var_file: "qa.tfvars"
 
-
   qa-apply:
-    needs: qa-plan
-    environment: qa
-    if: "${{ github.event_name  == 'push' }}"
     uses: ./.github/workflows/terraform_common.yml
     with:
       action: "apply"
       tf_var_file: "qa.tfvars"
+    needs: qa-plan
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    environment: qa
