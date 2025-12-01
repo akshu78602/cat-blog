@@ -33,6 +33,9 @@ jobs:
         with:
           role-to-assume: "arn:aws:iam::424851482428:role/abc"
           aws-region: us-east-1
+      
+      - name: print drs
+        run: ls -la
 
       - run: terraform init
 

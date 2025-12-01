@@ -12,20 +12,54 @@ permissions:
   id-token: write
   contents: read
 
-
 jobs:
 
+  # ============================
+  # PLAN JOB
+  # ============================
   qa-plan:
-    uses: ./.github/workflows/terraform_commons.yml
-    with:
-      action: "plan"
-      tf_var_file: "enviornments/qa.tfvars"
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      # Run PLAN using reusable workflow
+      - name: Run Terraform Plan
+        uses: ./.github/workflows/terraform_commons.yml
+        with:
+          action: "plan"
+          tf_var_file: "enviornments/qa.tfvars"
+
+      # Upload tfplan file
+      - name: Upload Terraform Plan Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-tfplan
+          path: tfplan
+
+
 
   qa-apply:
     needs: qa-plan
-    uses: ./.github/workflows/terraform_commons.yml
+    runs-on: ubuntu-latest
+    environment: qa
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    with:
-      action: "apply"
-      tf_var_file: "enviornments/qa.tfvars"
 
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Download Terraform Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-tfplan
+
+      - name: Run Terraform Apply
+        uses: ./.github/workflows/terraform_commons.yml
+        with:
+          action: "apply"
+          tf_var_file: "enviornments/qa.tfvars"
