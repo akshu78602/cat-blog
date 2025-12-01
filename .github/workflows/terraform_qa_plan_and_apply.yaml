@@ -14,9 +14,7 @@ permissions:
 
 jobs:
 
-  # ============================
-  # PLAN JOB
-  # ============================
+
   qa-plan:
     runs-on: ubuntu-latest
     permissions:
