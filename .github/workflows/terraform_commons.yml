@@ -1,14 +1,14 @@
-name: common-terraform
+name: terraform-commons
 
 on:
   workflow_call:
     inputs:
       action:
-        type: string
         required: true
-      tf_var_file:
         type: string
-        required: false
+      tf_var_file:
+        required: true
+        type: string
 
 jobs:
   terraform_basic_runs:
@@ -26,7 +26,7 @@ jobs:
         with:
           terraform_version: 1.5.7
 
-      - name: Setup AWS Authorization
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: "arn:aws:iam::424851482428:role/abc"
@@ -35,14 +35,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Run Terraform
-        shell: bash
+      - name: Terraform Run
         run: |
           if [[ "${{ inputs.action }}" == "plan" ]]; then
             terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
           elif [[ "${{ inputs.action }}" == "apply" ]]; then
             terraform apply "tfplan"
           else
-            echo "Invalid action: ${{ inputs.action }}"
+            echo "Invalid action"
             exit 1
           fi
