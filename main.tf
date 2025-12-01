@@ -34,6 +34,6 @@ to = module.iam_oidc.aws_iam_role.role
 }
 
 import {
-  id = "arn:aws:iam::424851482428:oidc-provider/token.actions.githubusercontent.com/"
+  id = "arn:aws:iam::424851482428:oidc-provider/token.actions.githubusercontent.com"
   to = module.iam_oidc.aws_iam_openid_connect_provider.default
 }
