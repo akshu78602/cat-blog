@@ -44,6 +44,9 @@ jobs:
         with:
           name: qa-tfplan
 
+      - name: Debug – show downloaded files
+        run: ls -la
+
       - name: Terraform Apply
         uses: ./.github/actions/terraform_commons
         with:
