@@ -44,7 +44,7 @@ jobs:
         with:
           name: qa-tfplan
 
-      - name: Debug – show downloaded files
+      - name: Debug show downloaded files
         run: ls -la
 
       - name: Terraform Apply

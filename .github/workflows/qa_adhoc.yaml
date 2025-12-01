@@ -1,0 +1,46 @@
+name: adhoc-qa-plan-and-apply
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  qa-adhoc-plan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Terraform Plan (Adhoc)
+        uses: ./.github/actions/terraform_commons
+        with:
+          action: "plan"
+          tf_var_file: "enviornments/qa.tfvars"
+
+      - name: Upload tfplan
+        uses: actions/upload-artifact@v4
+        with:
+          name: adhoc-qa-tfplan
+          path: tfplan
+
+  qa-adhoc-apply:
+    needs: qa-adhoc-plan
+    runs-on: ubuntu-latest
+    environment: qa
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download tfplan
+        uses: actions/download-artifact@v4
+        with:
+          name: adhoc-qa-tfplan
+
+      - name: Terraform Apply (Adhoc)
+        uses: ./.github/actions/terraform_commons
+        with:
+          action: "apply"
+          tf_var_file: "enviornments/qa.tfvars"
