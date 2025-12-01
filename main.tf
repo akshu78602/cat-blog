@@ -27,3 +27,8 @@ module "iam_oidc" {
 
 
 }
+
+import {
+id =  "abc"
+to = module.iam_oidc.aws_iam_role.role
+}
