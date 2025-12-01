@@ -1,3 +1,8 @@
 ecr_repo_name= "cat-blogs"
 repo_types= "MUTABLE"
 scan_image_on_push= true
+bucket_name= "qa-catblog-tfstate"
+repo_name= "cat-blog"
+repo_owner= "akshu78602"
+policy_name= "test1"
+role_name= "abc"
