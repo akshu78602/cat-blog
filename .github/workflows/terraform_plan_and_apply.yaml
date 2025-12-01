@@ -85,6 +85,6 @@ jobs:
           role-to-assume: "arn:aws:iam::424851482428:role/abc"
           aws-region: us-east-1
 
-      - name : terrafor Apply
+      - name : Terraform Apply
         run: terraform apply "tfplan"
         working-directory: .
