@@ -1,35 +1,17 @@
-name: adhoc-qa-plan-and-apply
+name: adhoc-terraform-comment
 
 on:
-  workflow_dispatch:
-
-permissions:
-  id-token: write
-  contents: read
+  issue_comment:
+    types: [created]
 
 jobs:
-  qa-adhoc-plan:
+  run-terraform:
+    if: contains(github.event.comment.body, '/apply qa')
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Terraform Plan (Adhoc)
-        uses: ./.github/actions/terraform_commons
-        with:
-          action: "plan"
-          tf_var_file: "enviornments/qa.tfvars"
-
-      - name: Upload tfplan
-        uses: actions/upload-artifact@v4
-        with:
-          name: adhoc-qa-tfplan
-          path: tfplan
-
-  qa-adhoc-apply:
-    needs: qa-adhoc-plan
-    runs-on: ubuntu-latest
-    environment: qa
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +19,9 @@ jobs:
       - name: Download tfplan
         uses: actions/download-artifact@v4
         with:
-          name: adhoc-qa-tfplan
+          name: qa-tfplan
 
-      - name: Terraform Apply (Adhoc)
+      - name: Apply via comment
         uses: ./.github/actions/terraform_commons
         with:
           action: "apply"
