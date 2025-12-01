@@ -8,18 +8,22 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
+
 jobs:
 
   qa-plan:
-    uses: ./.github/workflows/terraform_commons.yml@master
+    uses: ./.github/workflows/terraform_commons.yml
     with:
       action: "plan"
-      tf_var_file: "environments/qa.tfvars"
+      tf_var_file: "enviornments/qa.tfvars"
 
   qa-apply:
-    needs: qa-plan
-    if: ${{ github.event_name == 'push' }}
-    uses: ./.github/workflows/terraform_commons.yml@master
+    uses: ./.github/workflows/terraform_commons.yml
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     with:
       action: "apply"
-      tf_var_file: "qa.tfvars"
+      tf_var_file: "enviornments/qa.tfvars"
