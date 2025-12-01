@@ -42,3 +42,23 @@ import {
   id= "arn:aws:iam::424851482428:policy/test1"
   to= module.iam_oidc.aws_iam_policy.policy
 }
+
+data "aws_vpc" "eks" {
+  id = var.vpc_id
+}
+
+data "aws_subnet" "eks" {
+  for_each = toset(var.subnet_ids)
+  id       = each.value
+}
+
+
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "20.0.0"
+
+  cluster_name = var.cluster_name
+
+  vpc_id     = data.aws_vpc.eks.id
+  subnet_ids = data.aws_subnets.eks.ids
+}

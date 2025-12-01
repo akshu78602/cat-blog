@@ -60,3 +60,17 @@ variable "repo_name" {
   type = string
 }
 
+variable "vpc_id" {
+  type        = string
+  description = "Existing VPC ID for the EKS cluster"
+}
+
+variable "subnet_ids" {
+  type        = list(string)
+  description = "List of existing subnet IDs for EKS cluster"
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "Name of the EKS cluster"
+}

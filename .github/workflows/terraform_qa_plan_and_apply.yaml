@@ -13,6 +13,7 @@ permissions:
 jobs:
 
   build_and_push_image:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
 
     steps:
