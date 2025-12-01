@@ -17,10 +17,13 @@ jobs:
       tf_var_file: "qa.tfvars"
 
   qa-apply:
-    uses: ./.github/workflows/terraform_common.yml
-    with:
-      action: "apply"
-      tf_var_file: "qa.tfvars"
     needs: qa-plan
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     environment: qa
+    
+    steps:
+      - name: apple qa tf
+        uses: ./.github/workflows/terraform_common.yml
+        with:
+          action: "apply"
+          tf_var_file: "qa.tfvars"
