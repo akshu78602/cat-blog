@@ -113,23 +113,3 @@ This project is extremely valuable as a **portfolio demo** because it shows your
 ### ✔ Understand real production patterns
 
 Even though the website itself is simple, the **cloud engineering behind it is production ready**.
-
----
-
-## 📌 Future Enhancements (Optional Ideas)
-
-* Add a small API backend (FastAPI or Lambda)
-* Add image gallery with S3 bucket + CloudFront
-* Add metrics (Prometheus, Grafana dashboard)
-* Add canary deployments via Kubernetes
-
----
-
-If you'd like, I can also:
-
-✔ Create a polished visual architecture diagram
-✔ Write a more formal README
-✔ Write a recruiter-friendly project description
-✔ Add badges (Build Passing, Terraform Plan, etc.)
-
-Just say the word!
