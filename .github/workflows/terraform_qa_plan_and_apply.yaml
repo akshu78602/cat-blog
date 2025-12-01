@@ -2,42 +2,29 @@ name: qa plan and apply
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
   pull_request:
-    branches:
-      - master
-
-permissions:
-  id-token: write
-  contents: read
+    branches: [ master ]
 
 jobs:
 
-
   qa-plan:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Run Terraform Plan
-        uses: akshu78602/cat-blog/.github/workflows/terraform_commons.yml@master
+      - name: Terraform Plan
+        uses: ./.github/actions/terraform_commons
         with:
           action: "plan"
           tf_var_file: "enviornments/qa.tfvars"
 
-      - name: Upload Terraform Plan Artifact
+      - name: Upload tfplan
         uses: actions/upload-artifact@v4
         with:
           name: qa-tfplan
           path: tfplan
-
-
 
   qa-apply:
     needs: qa-plan
@@ -46,16 +33,14 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Download Terraform Plan Artifact
+      - name: Download tfplan
         uses: actions/download-artifact@v4
         with:
           name: qa-tfplan
 
-      - name: Run Terraform Apply
-        uses: akshu78602/cat-blog/.github/workflows/terraform_commons.yml@master
-        with:
+      - name: Terraform Apply
+        uses: ./.github/actions/terraform_commons
           action: "apply"
           tf_var_file: "enviornments/qa.tfvars"

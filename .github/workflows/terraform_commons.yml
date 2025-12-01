@@ -1,52 +1,32 @@
 name: Terraform Common
+description: Run terraform plan or apply
 
-permissions:
-  id-token: write
-  contents: read
+inputs:
+  action:
+    required: true
+  tf_var_file:
+    required: false
 
-on:
-  workflow_call:
-    inputs:
-      action:
-        required: true
-        type: string
-      tf_var_file:
-        required: false
-        type: string
+runs:
+  using: "composite"
+  steps:
 
-jobs:
-  terraform_basic_runs:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+    - uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
 
-    steps:
-      - uses: actions/checkout@v4
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: "arn:aws:iam::424851482428:role/abc"
+        aws-region: us-east-1
+        
+    - run: terraform init
+      shell: bash
 
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.7
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: "arn:aws:iam::424851482428:role/abc"
-          aws-region: us-east-1
-
-      - name: print dirs
-        run: ls -la
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Run Terraform
-        shell: bash
-        run: |
-          if [[ "${{ inputs.action }}" == "plan" ]]; then
-            terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
-          elif [[ "${{ inputs.action }}" == "apply" ]]; then
-            terraform apply "tfplan"
-          else
-            echo "Unknown action"
-            exit 1
-          fi
+    - run: |
+        if [[ "${{ inputs.action }}" == "plan" ]]; then
+          terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
+        elif [[ "${{ inputs.action }}" == "apply" ]]; then
+          terraform apply "tfplan"
+        fi
+      shell: bash
