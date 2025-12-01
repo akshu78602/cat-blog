@@ -19,6 +19,7 @@ jobs:
   qa-apply:
     needs: qa-plan
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest  
     environment: qa
     
     steps:
