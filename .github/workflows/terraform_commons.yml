@@ -4,7 +4,6 @@ permissions:
   id-token: write
   contents: read
 
-
 on:
   workflow_call:
     inputs:
@@ -33,11 +32,12 @@ jobs:
         with:
           role-to-assume: "arn:aws:iam::424851482428:role/abc"
           aws-region: us-east-1
-      
-      - name: print drs
+
+      - name: print dirs
         run: ls -la
 
-      - run: terraform init
+      - name: Terraform Init
+        run: terraform init
 
       - name: Run Terraform
         shell: bash
