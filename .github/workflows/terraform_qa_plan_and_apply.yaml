@@ -24,7 +24,7 @@ jobs:
     needs: qa-plan
     environment: qa
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    uses: ./.github/workflows/terraform_commons.yml
+    uses: akshu78602/cat-blog/.github/workflows/terraform_commons.yml@master
     with:
       action: "apply"
       tf_var_file: "environments/qa.tfvars"
