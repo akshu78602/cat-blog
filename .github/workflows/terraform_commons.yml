@@ -4,43 +4,45 @@ on:
   workflow_call:
     inputs:
       action:
+        type: string
         required: true
-        type: string
       tf_var_file:
-        required: false
         type: string
+        required: false
 
 jobs:
-  terrform-basic-runs:
+  terraform_basic_runs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
 
     steps:
-        - name: checkout-repo
-          uses: actions/checkout@v4
-      
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@v3
-          with:
-            terraform_version: 1.5.7
+      - name: Checkout Repo
+        uses: actions/checkout@v4
 
-        - name: Setup Aws Authorization
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            role-to-assume: "arn:aws:iam::424851482428:role/abc"
-            aws-region: us-east-1
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.7
 
-        - name: Terraform Intialization
-          run: terraform init
+      - name: Setup AWS Authorization
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::424851482428:role/abc"
+          aws-region: us-east-1
 
-        - name: Run Terraform
-          run: |
-            if [ "${{ inputs.action }}" == "plan" ]; then
-              terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
-            elif [ "${{ inputs.action }}" == "apply" ]; then
-              terraform apply "tfplan"
-            else
-                echo "No action specified"
-                exit 1
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Run Terraform
+        shell: bash
+        run: |
+          if [[ "${{ inputs.action }}" == "plan" ]]; then
+            terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
+          elif [[ "${{ inputs.action }}" == "apply" ]]; then
+            terraform apply "tfplan"
+          else
+            echo "Invalid action: ${{ inputs.action }}"
+            exit 1
+          fi
