@@ -33,14 +33,7 @@ id =  "abc"
 to = module.iam_oidc.aws_iam_role.role
 }
 
-module "identity_provider" {
-
-  source = "./tf_modules/iam"
-
-
-}
-
 import {
   id = "arn:aws:iam::424851482428:oidc-provider/token.actions.githubusercontent.com/"
-  to = module.identity_provider.aws_iam_openid_connect_provider.default
+  to = module.iam_oidc.aws_iam_openid_connect_provider.default
 }
