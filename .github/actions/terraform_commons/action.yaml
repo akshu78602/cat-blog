@@ -7,6 +7,11 @@ inputs:
   tf_var_file:
     required: false
 
+permissions:
+  id-token: write
+  contents: read
+
+
 runs:
   using: "composite"
   steps:
@@ -38,4 +43,4 @@ runs:
         elif [[ "${{ inputs.action }}" == "apply" ]]; then
           terraform apply "tfplan"
         fi
-        
+      shell: bash

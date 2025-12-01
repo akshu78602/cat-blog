@@ -2,30 +2,53 @@ name: qa plan and apply
 
 on:
   push:
-    branches:
-      - '**'
+    branches: [ master ]
   pull_request:
-    branches:
-      - master
+    branches: [ master ]
 
 permissions:
   id-token: write
   contents: read
 
-
 jobs:
 
   qa-plan:
-    uses: ./.github/workflows/terraform_commons.yml
-    with:
-      action: "plan"
-      tf_var_file: "enviornments/qa.tfvars"
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Terraform Plan
+        uses: ./.github/actions/terraform_commons
+        with:
+          action: "plan"
+          tf_var_file: "enviornments/qa.tfvars"
+
+      - name: Upload tfplan
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-tfplan
+          path: tfplan
 
   qa-apply:
     needs: qa-plan
-    uses: ./.github/workflows/terraform_commons.yml
+    runs-on: ubuntu-latest
+    environment: qa
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    with:
-      action: "apply"
-      tf_var_file: "enviornments/qa.tfvars"
-      
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download tfplan
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-tfplan
+
+      - name: Debug – show downloaded files
+        run: ls -la
+
+      - name: Terraform Apply
+        uses: ./.github/actions/terraform_commons
+        with:
+          action: "apply"
+          tf_var_file: "enviornments/qa.tfvars"
