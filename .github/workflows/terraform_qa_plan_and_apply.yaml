@@ -11,32 +11,6 @@ permissions:
   contents: read
 
 jobs:
-
-  build_and_push_image:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-
-      - uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: "arn:aws:iam::424851482428:role/abc"
-          aws-region: us-east-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build, tag, and push docker image to Amazon ECR
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: cat-blogs
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
   qa-plan:
     runs-on: ubuntu-latest
 
@@ -47,7 +21,8 @@ jobs:
         uses: ./.github/actions/terraform_commons
         with:
           action: "plan"
-          tf_var_file: "enviornments/qa.tfvars"
+          tf_var_file: "env_qa.tfvars"
+          env_name: "qa"
 
       - name: Upload tfplan
         uses: actions/upload-artifact@v4
@@ -76,4 +51,4 @@ jobs:
         uses: ./.github/actions/terraform_commons
         with:
           action: "apply"
-          tf_var_file: "enviornments/qa.tfvars"
+          tf_var_file: "env_qa/qa.tfvars"

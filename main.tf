@@ -1,8 +1,8 @@
 module "ecr_image" {
 
-  source               = "./tf_modules/ecr"
-  ecr_repo_name        = var.ecr_repo_name
-  repo_types           = var.repo_types
+  source        = "./modules/ecr"
+  ecr_repo_name = var.ecr_repo_name
+  repo_types    = var.repo_types
 
   scan_image_on_push = var.scan_image_on_push
 
@@ -10,27 +10,27 @@ module "ecr_image" {
 
 import {
 
-id =  "cat-blogs"
-to = module.ecr_image.aws_ecr_repository.repo
+  id = "cat-blogs"
+  to = module.ecr_image.aws_ecr_repository.repo
 
 
 }
 
 
 module "iam_oidc" {
-  source= "./tf_modules/iam"
-  role_name =  var.role_name
-  policy_name= var.policy_name
-  repo_name= var.repo_name
-  repo_owner= var.repo_owner
+  source      = "./modules/iam"
+  role_name   = var.role_name
+  policy_name = var.policy_name
+  repo_name   = var.repo_name
+  repo_owner  = var.repo_owner
 
 
 
 }
 
 import {
-id =  "abc"
-to = module.iam_oidc.aws_iam_role.role
+  id = "abc"
+  to = module.iam_oidc.aws_iam_role.role
 }
 
 import {
@@ -39,26 +39,33 @@ import {
 }
 
 import {
-  id= "arn:aws:iam::424851482428:policy/test1"
-  to= module.iam_oidc.aws_iam_policy.policy
+  id = "arn:aws:iam::424851482428:policy/test1"
+  to = module.iam_oidc.aws_iam_policy.policy
 }
 
-data "aws_vpc" "eks" {
-  id = var.vpc_id
+data "aws_vpc" "default_vpc" {
+  default = true
 }
 
-data "aws_subnet" "eks" {
-  for_each = toset(var.subnet_ids)
-  id       = each.value
+data "aws_subnets" "default_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default_vpc.id]
+  }
 }
-
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "20.0.0"
+  version = "19.21.0"
 
   cluster_name = var.cluster_name
+  vpc_id       = data.aws_vpc.default_vpc.id
+  subnet_ids   = data.aws_subnets.default_subnets.ids
 
-  vpc_id     = data.aws_vpc.eks.id
-  subnet_ids = data.aws_subnets.eks.ids
+}
+
+
+import {
+  to = module.eks.aws_eks_cluster.this[0]
+  id = "test"
 }

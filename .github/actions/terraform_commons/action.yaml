@@ -4,6 +4,8 @@ description: Run terraform plan or apply
 inputs:
   action:
     required: true
+  env_name:
+    required: true
   tf_var_file:
     required: false
 
@@ -12,6 +14,7 @@ runs:
   steps:
 
     - name: Set working directory
+      working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
       run: echo "WORKSPACE=${GITHUB_WORKSPACE}" 
       shell: bash
 
@@ -23,15 +26,19 @@ runs:
       with:
         role-to-assume: "arn:aws:iam::424851482428:role/abc"
         aws-region: us-east-1
+    
+    -  name: Terraform Validate
+       run: |
+          terraform validate
 
     - name: Terraform Init
-      run: terraform init
+      run:  terraform init -var-file="${{ inputs.tf_var_file }}"
       shell: bash
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
 
     - name: Run Terraform
       shell: bash
-      working-directory: ${{ github.workspace }}
+      working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
       run: |
         if [[ "${{ inputs.action }}" == "plan" ]]; then
           terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
