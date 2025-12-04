@@ -14,7 +14,7 @@ runs:
   steps:
 
     - name: Set working directory
-      working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
+      working-directory: ${{ github.workspace }}
       run: echo "WORKSPACE=${GITHUB_WORKSPACE}" 
       shell: bash
 
