@@ -30,7 +30,6 @@ runs:
     - name: Terraform Init
       run:  terraform init -var-file="${{ inputs.tf_var_file }}"
       shell: bash
-      working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
 
     -  name: Terraform Validate
        shell: bash
