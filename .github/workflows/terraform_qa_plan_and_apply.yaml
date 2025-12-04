@@ -21,7 +21,7 @@ jobs:
         uses: ./.github/actions/terraform_commons
         with:
           action: "plan"
-          tf_var_file: "env_qa.tfvars"
+          tf_var_file: "env_qa/tfvars"
           env_name: "env_qa"
 
       - name: Upload tfplan
