@@ -68,7 +68,8 @@ resource "aws_iam_policy" "policy" {
           "ecr:*",
           "iam:*",
           "sts:*",
-          "kms:*"
+          "kms:*",
+          "ec2:*"
         ]
         Effect   = "Allow"
         Resource = "*"
