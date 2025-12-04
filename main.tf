@@ -62,6 +62,9 @@ module "eks" {
   vpc_id       = data.aws_vpc.default_vpc.id
   subnet_ids   = data.aws_subnets.default_subnets.ids
 
+  cluster_enabled_log_types = []
+  create_cloudwatch_log_group = false
+
 }
 
 
@@ -69,3 +72,4 @@ import {
   to = module.eks.aws_eks_cluster.this[0]
   id = "test"
 }
+
