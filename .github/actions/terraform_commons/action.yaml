@@ -28,8 +28,8 @@ runs:
         aws-region: us-east-1
     
     -  name: Terraform Validate
-       run: |
-          terraform validate
+       shell: bash
+       run:  terraform validate
 
     - name: Terraform Init
       run:  terraform init -var-file="${{ inputs.tf_var_file }}"
