@@ -22,7 +22,7 @@ jobs:
         with:
           action: "plan"
           tf_var_file: "env_qa.tfvars"
-          env_name: "qa"
+          env_name: "env_qa"
 
       - name: Upload tfplan
         uses: actions/upload-artifact@v4
