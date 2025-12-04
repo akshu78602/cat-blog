@@ -41,6 +41,7 @@ runs:
       working-directory: ${{ github.workspace }}/${{ inputs.env_name }}
       run: |
         if [[ "${{ inputs.action }}" == "plan" ]]; then
+          echo "terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan"
           terraform plan -var-file="${{ inputs.tf_var_file }}" -out=tfplan
         elif [[ "${{ inputs.action }}" == "apply" ]]; then
           terraform apply "tfplan"
