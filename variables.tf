@@ -24,15 +24,15 @@ variable "scan_image_on_push" {
 
 variable "bucket_name" {
 
-    type= string
+  type = string
 
 
 }
 
-variable "acl"{
+variable "acl" {
 
-    type= string
-    default= "private"
+  type    = string
+  default = "private"
 
 }
 
@@ -60,15 +60,7 @@ variable "repo_name" {
   type = string
 }
 
-variable "vpc_id" {
-  type        = string
-  description = "Existing VPC ID for the EKS cluster"
-}
 
-variable "subnet_ids" {
-  type        = list(string)
-  description = "List of existing subnet IDs for EKS cluster"
-}
 
 variable "cluster_name" {
   type        = string
