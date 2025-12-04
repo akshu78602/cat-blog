@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Terraform Plan
+      - name: terraform_commons
         uses: ./.github/actions/terraform_commons
         with:
           action: "plan"
