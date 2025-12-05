@@ -7,3 +7,6 @@ repo_owner= "akshu78602"
 policy_name= "test1"
 role_name= "abc"
 cluster_name= "test1"
+cluster_name_existing= "test"
+cluster_role_name = "EKSClusterRole"
+

@@ -57,28 +57,48 @@ data "aws_subnets" "default_subnets" {
 
 
   filter {
-  name   = "availability-zone"
-  values = [
-    "us-east-1a",
-    "us-east-1b",
-    "us-east-1c",
-    "us-east-1d",
-    "us-east-1f",
-  ]
+    name = "availability-zone"
+    values = [
+      "us-east-1a",
+      "us-east-1b",
+      "us-east-1c",
+      "us-east-1d",
+      "us-east-1f",
+    ]
+  }
 }
+
+data "http" "my_ip" {
+
+  url = "https://checkip.amazonaws.com"
+
+
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.21.0"
+  version = "20.0.0"
 
-  cluster_name = var.cluster_name
-  vpc_id       = data.aws_vpc.default_vpc.id
-  subnet_ids   = data.aws_subnets.default_subnets.ids
+  cluster_name    = var.cluster_name
+  cluster_version = "1.29"
 
-  cluster_enabled_log_types = []
-  create_cloudwatch_log_group = false
+  vpc_id     = data.aws_vpc.default_vpc.id
+  subnet_ids = data.aws_subnets.default_subnets.ids
 
+  cluster_endpoint_public_access       = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 
+  create_kms_key                = false
+  kms_key_enable_default_policy = false
+  cluster_encryption_config     = []
 
+ 
+  eks_managed_node_groups = {
+    default = {
+      min_size       = 1
+      max_size       = 2
+      desired_size   = 1
+      instance_types = ["t3.small"]
+    }
+  }
 }
