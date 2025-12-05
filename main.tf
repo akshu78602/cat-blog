@@ -52,6 +52,20 @@ data "aws_subnets" "default_subnets" {
     name   = "vpc-id"
     values = [data.aws_vpc.default_vpc.id]
   }
+
+
+
+
+  filter {
+  name   = "availability-zone"
+  values = [
+    "us-east-1a",
+    "us-east-1b",
+    "us-east-1c",
+    "us-east-1d",
+    "us-east-1f",
+  ]
+}
 }
 
 module "eks" {
@@ -64,5 +78,7 @@ module "eks" {
 
   cluster_enabled_log_types = []
   create_cloudwatch_log_group = false
+
+
 
 }
