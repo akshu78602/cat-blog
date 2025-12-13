@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Muffin’s Cat Blog 🐱</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Muffin the cat — a cozy photo gallery." />
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+  <!-- INTER FONT -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0f1020; --card:#161938; --text:#e9edf3; --muted:#a7b0c8;
+      --accent:#8bd3ff; --ring:rgba(139,211,255,.35);
+      --radius:18px; --shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;}
+
+    html,body{
+      margin:0;
+      background:
+        radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%),
+        var(--bg);
+      color:var(--text);
+      font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-size:16px;
+      line-height:1.7;
+      font-weight:400;
+    }
+
+    body{min-height:100vh;display:flex;flex-direction:column;}
+    .wrap{flex:1;}
+
+    img{max-width:100%;height:auto;display:block;}
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .wrap{max-width:980px;margin:56px auto;padding:0 18px;}
+
+    .hero{
+      background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:calc(var(--radius) + 6px);
+      padding:28px 28px 12px;
+      box-shadow:var(--shadow);
+    }
+
+    .badge{
+      display:inline-flex;gap:8px;align-items:center;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      padding:6px 12px;border-radius:999px;
+      color:var(--muted);font-size:14px;margin-bottom:10px;
+    }
+
+    .title{font-size:clamp(30px,4vw,46px);margin:4px 0 10px;font-weight:600;}
+    .subtitle{color:var(--muted);margin:0 0 18px;font-size:15px;}
+
+    .status{
+      display:inline-flex;gap:8px;align-items:center;
+      background:#0e1326;border:1px dashed rgba(139,211,255,.45);
+      color:var(--accent);
+      padding:8px 12px;border-radius:10px;
+      font-family:ui-monospace,Menlo,Consolas;
+      font-size:13px;
+    }
+
+    .grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:16px;
+    }
+
+    .card{
+      grid-column:span 12;
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    @media(min-width:720px){
+      .card.half{grid-column:span 6;}
+    }
+
+    .inner{padding:20px;}
+    h3{margin:0 0 10px;font-size:20px;font-weight:600;}
+    .muted{color:var(--muted);}
+
+    /* Gallery */
+    .gallery{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;padding:14px;
+    }
+
+    .photo{
+      position:relative;border-radius:14px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.07);
+      background:#0b0d1a;cursor:pointer;
+      aspect-ratio:4/3;
+    }
+
+    .photo img{
+      width:100%;height:100%;
+      object-fit:cover;
+      transition:transform .25s ease;
+    }
+
+    .photo:hover img{transform:scale(1.04);}
+
+    /* STORY */
+    .story-banner{
+      position:relative;display:block;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.07);
+      overflow:hidden;
+    }
+
+    .story-banner .frame{
+      width:100%;aspect-ratio:16/9;overflow:hidden;
+    }
+
+    .story-banner img{
+      width:100%;height:100%;
+      object-fit:cover;
+      object-position:75% 70%;
+    }
+
+    .story-label{
+      position:absolute;left:14px;bottom:14px;
+      background:rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.2);
+      backdrop-filter:blur(4px);
+      padding:8px 12px;color:#fff;
+      border-radius:999px;font-weight:600;
+    }
+
+    /* Footer */
+    .site-footer{
+      text-align:center;color:var(--muted);font-size:14px;
+      padding:18px 12px;margin-top:24px;
+      border-top:1px solid rgba(255,255,255,.08);
+    }
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.8);
+      display:none;
+      align-items:center;justify-content:center;
+      padding:20px;z-index:999;
+    }
+
+    .lightbox.open{display:flex;}
+
+    .lightbox img{
+      max-width:min(92vw,1200px);
+      max-height:82vh;
+      border-radius:16px;
+      box-shadow:0 20px 60px rgba(0,0,0,.6);
+    }
+
+    .lb-ui{
+      position:fixed;inset:0;
+      display:flex;align-items:center;
+      justify-content:space-between;
+      padding:20px;
+    }
+
+    .lb-btn{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+      color:#fff;border-radius:12px;
+      padding:10px 14px;cursor:pointer;
+    }
+
+    .lb-btn:hover{outline:2px solid var(--ring);}
+    .lb-close{position:absolute;top:16px;right:16px;}
+  </style>
+</head>
+
+<body>
+
+  <div class="wrap">
+    <section class="hero">
+      <div class="badge">🐾 Welcome to Muffin’s corner</div>
+      <h1 class="title">Cat Blog is alive 🐱</h1>
+      <p class="subtitle">Tiny static site. Fast, cozy, and purr-fect for stories and photos.</p>
+      <div class="status">CATBLOG_OK</div>
+
+      <div class="grid">
+
+        <!-- ABOUT -->
+        <div class="card half">
+          <div class="inner">
+            <h3>About Muffin</h3>
+            <p class="muted">
+              <strong>Hello, I'm Muffin.</strong> A proud fluffy king who roams the apartment at 4 AM
+              ensuring shadows behave. Enjoy my adventures and finest poses below. 😺
+            </p>
+          </div>
+        </div>
+
+        <!-- GALLERY -->
+        <div class="card half">
+          <div class="inner"><h3>Photo Gallery</h3></div>
+          <div id="gallery" class="gallery"></div>
+        </div>
+
+        <!-- STORY -->
+        <div class="card story-card-img">
+          <a class="story-banner" href="#fouram">
+            <div class="frame">
+              <img src="4am.jpg" alt="Muffin at 4 AM" loading="lazy" />
+            </div>
+            <div class="story-label">🌙 Muffin’s 4 AM Story</div>
+          </a>
+
+          <div class="inner">
+            <h3>Muffin’s 4 AM Wake-Up Mission</h3>
+
+            <p class="muted">
+              Every morning at <strong>4 AM</strong>, Muffin performs his sacred ritual:
+              the “Wake Dad Immediately” operation.
+              <br><br>
+
+              Step 1: Walk across Dad’s face.  
+              Step 2: Meow once (dramatically).  
+              Step 3: Sprint into the darkness for no reason.  
+              Step 4: Return to stare at Dad like a disappointed manager.
+              <br><br>
+
+              Dad wakes up terrified.  
+              Muffin just wanted a snack. Or attention.  
+              Or simply to cause problems on purpose.
+              <br><br>
+
+              After Dad finally feeds him, Muffin sniffs the bowl,  
+              takes <strong>one</strong> bite… and walks away.
+              <br><br>
+
+              Because the goal was never food —  
+              <strong>the goal was chaos.</strong>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" class="lightbox">
+    <div class="lb-ui">
+      <button id="prev" class="lb-btn">⟨ Prev</button>
+      <button id="next" class="lb-btn">Next ⟩</button>
+      <button id="close" class="lb-btn lb-close">✕</button>
+    </div>
+    <img id="lbimg" alt="Muffin photo" />
+  </div>
+
+  <footer class="site-footer">Made with ❤️ for Muffin</footer>
+
+  <script>
+    const IMAGES = ["test.jpg"];
+
+    const gallery = document.getElementById("gallery");
+    const lb = document.getElementById("lightbox");
+    const lbimg = document.getElementById("lbimg");
+    let idx = 0;
+
+    function openLB(i){
+      idx = i;
+      lbimg.src = IMAGES[idx];
+      lb.classList.add("open");
+    }
+    function closeLB(){
+      lb.classList.remove("open");
+      lbimg.src = "";
+    }
+    function next(){
+      idx = (idx + 1) % IMAGES.length;
+      lbimg.src = IMAGES[idx];
+    }
+    function prev(){
+      idx = (idx - 1 + IMAGES.length) % IMAGES.length;
+      lbimg.src = IMAGES[idx];
+    }
+
+    IMAGES.forEach((name,i)=>{
+      const fig = document.createElement("figure");
+      fig.className = "photo";
+      const img = document.createElement("img");
+      img.src = name;
+      img.alt = "Muffin photo";
+      img.loading = "lazy";
+      fig.appendChild(img);
+      fig.addEventListener("click", ()=>openLB(i));
+      gallery.appendChild(fig);
+    });
+
+    document.getElementById("next").addEventListener("click", next);
+    document.getElementById("prev").addEventListener("click", prev);
+    document.getElementById("close").addEventListener("click", closeLB);
+
+    lb.addEventListener("click", e => { if (e.target === lb) closeLB(); });
+    document.addEventListener("keydown", e => {
+      if (!lb.classList.contains("open")) return;
+      if (e.key === "Escape") closeLB();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    });
+  </script>
+
+</body>
+</html>
