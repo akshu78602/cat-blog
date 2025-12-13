@@ -1,4 +1,4 @@
-name: snar analysis
+name: sonar analysis
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  sonar Analysis:
+  sonar_analysis:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
