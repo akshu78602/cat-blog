@@ -1,4 +1,4 @@
-name: build
+name: snar analysis
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  sonar Analysis:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,4 +22,3 @@ jobs:
       - name: Sync site folder to S3
         run: |
           aws s3 sync ./site s3://blog-hosting-cat-1 --delete
-          
