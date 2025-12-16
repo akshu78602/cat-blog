@@ -36,7 +36,7 @@ jobs:
       - name: Build and push image
         run: |
           IMAGE_URI=424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blog-api:${{ github.sha }}
-          docker build -t "$IMAGE_URI" -f k8s/Dockerfile .
+          docker build -t "$IMAGE_URI" -f k8s/Dockerfile ./backend
           docker push "$IMAGE_URI"
 
   apply_kubernetes_manifests:
