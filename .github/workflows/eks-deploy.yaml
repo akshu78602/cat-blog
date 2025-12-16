@@ -64,12 +64,7 @@ jobs:
 
       - name: Cluster info
         run: kubectl cluster-info
-
-      - name: Render manifests with image tag
-        run: |
-          IMAGE_TAG=${{ github.sha }}
-          sed -i "s/IMAGE_TAG/${IMAGE_TAG}/g" k8s/deployment.yaml
-
+        
       - name: Apply manifests
         run: kubectl apply -f k8s/
 
