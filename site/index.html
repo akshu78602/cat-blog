@@ -115,6 +115,25 @@
 
     .photo:hover img{transform:scale(1.04);}
 
+    .photo-overlay{
+      position:absolute;bottom:0;left:0;right:0;
+      background:linear-gradient(to top, rgba(0,0,0,.7), transparent);
+      padding:12px;display:flex;align-items:center;justify-content:space-between;
+      opacity:1;
+    }
+
+    .like-btn{
+      background:rgba(255,255,255,.1);
+      border:1px solid rgba(255,255,255,.2);
+      color:#fff;border-radius:8px;
+      padding:6px 12px;cursor:pointer;
+      font-size:13px;display:flex;align-items:center;gap:6px;
+      transition:all .2s ease;
+    }
+    .like-btn:hover{background:rgba(255,255,255,.2);transform:scale(1.05);}
+    .like-btn.liked{background:rgba(255,82,82,.3);border-color:rgba(255,82,82,.5);}
+    .like-count{color:#fff;font-size:13px;font-weight:500;}
+
     /* STORY */
     .story-banner{
       position:relative;display:block;
@@ -183,6 +202,21 @@
 
     .lb-btn:hover{outline:2px solid var(--ring);}
     .lb-close{position:absolute;top:16px;right:16px;}
+
+    .lb-actions{
+      position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
+      display:flex;gap:12px;align-items:center;
+    }
+    .lb-like-btn{
+      background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;border-radius:12px;
+      padding:10px 18px;cursor:pointer;
+      font-size:14px;display:flex;align-items:center;gap:8px;
+      transition:all .2s ease;
+    }
+    .lb-like-btn:hover{background:rgba(255,255,255,.25);}
+    .lb-like-btn.liked{background:rgba(255,82,82,.4);border-color:rgba(255,82,82,.6);}
   </style>
 </head>
 
@@ -192,7 +226,7 @@
     <section class="hero">
       <div class="badge">🐾 Welcome to Muffin’s corner</div>
       <h1 class="title">Cat Blog is alive 🐱</h1>
-      <p class="subtitle">Tiny static site. Fast, cozy, and purr-fect for stories and photos.</p>
+      <p class="subtitle">A cozy corner for Muffin's adventures, photos, and daily stories. Fast, simple, and purr-fect.</p>
       <div class="status">CATBLOG_OK</div>
 
       <div class="grid">
@@ -264,51 +298,152 @@
       <button id="close" class="lb-btn lb-close">✕</button>
     </div>
     <img id="lbimg" alt="Muffin photo" />
+    <div class="lb-actions">
+      <button id="lbLikeBtn" class="lb-like-btn">
+        ❤️ <span id="lbLikeCount">0</span>
+      </button>
+    </div>
   </div>
 
   <footer class="site-footer">Made with ❤️ for Muffin</footer>
 
   <script>
-    const IMAGES = ["test.jpg"];
+    // API configuration - adjust this to your API endpoint
+    // For production, point to your EKS ingress endpoint
+    const API_BASE = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000' 
+      : 'https://api.yourdomain.com';  // Update with your actual API domain
+    
+    let photos = [];
+    let currentPhotoId = null;
 
     const gallery = document.getElementById("gallery");
     const lb = document.getElementById("lightbox");
     const lbimg = document.getElementById("lbimg");
     let idx = 0;
 
+    // Fetch photos from API
+    async function loadPhotos() {
+      try {
+        const response = await fetch(`${API_BASE}/api/photos`);
+        const data = await response.json();
+        photos = data.photos || [];
+        renderGallery();
+      } catch (error) {
+        console.error('Failed to load photos:', error);
+        // Fallback to static images
+        photos = [{ id: '1', name: 'test.jpg', title: 'Muffin Portrait', likes: 0 }];
+        renderGallery();
+      }
+    }
+
+    // Render gallery
+    function renderGallery() {
+      gallery.innerHTML = '';
+      photos.forEach((photo, i) => {
+        const fig = document.createElement("figure");
+        fig.className = "photo";
+        
+        const img = document.createElement("img");
+        img.src = photo.name;
+        img.alt = photo.title || "Muffin photo";
+        img.loading = "lazy";
+        fig.appendChild(img);
+        
+        // Overlay with like button
+        const overlay = document.createElement("div");
+        overlay.className = "photo-overlay";
+        
+        const likeBtn = document.createElement("button");
+        likeBtn.className = "like-btn";
+        likeBtn.innerHTML = `❤️ <span class="like-count">${photo.likes || 0}</span>`;
+        likeBtn.onclick = (e) => {
+          e.stopPropagation();
+          likePhoto(photo.id);
+          likeBtn.classList.add("liked");
+          setTimeout(() => {
+            const countSpan = likeBtn.querySelector(".like-count");
+            if (countSpan) countSpan.textContent = (photo.likes || 0) + 1;
+          }, 100);
+        };
+        
+        overlay.appendChild(likeBtn);
+        fig.appendChild(overlay);
+        
+        fig.addEventListener("click", () => openLB(i));
+        gallery.appendChild(fig);
+      });
+    }
+
+    // Like a photo
+    async function likePhoto(photoId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/photos/${photoId}/like`, {
+          method: 'POST'
+        });
+        const data = await response.json();
+        const photo = photos.find(p => p.id === photoId);
+        if (photo) {
+          photo.likes = data.photo.likes;
+          // Update UI
+          renderGallery();
+          updateLightboxLikeButton();
+        }
+      } catch (error) {
+        console.error('Failed to like photo:', error);
+      }
+    }
+
+    // Update lightbox like button
+    function updateLightboxLikeButton() {
+      if (currentPhotoId) {
+        const photo = photos.find(p => p.id === currentPhotoId);
+        const btn = document.getElementById("lbLikeBtn");
+        const count = document.getElementById("lbLikeCount");
+        if (photo && btn && count) {
+          count.textContent = photo.likes || 0;
+        }
+      }
+    }
+
     function openLB(i){
       idx = i;
-      lbimg.src = IMAGES[idx];
+      currentPhotoId = photos[i]?.id;
+      lbimg.src = photos[i].name;
+      updateLightboxLikeButton();
       lb.classList.add("open");
     }
     function closeLB(){
       lb.classList.remove("open");
       lbimg.src = "";
+      currentPhotoId = null;
     }
     function next(){
-      idx = (idx + 1) % IMAGES.length;
-      lbimg.src = IMAGES[idx];
+      idx = (idx + 1) % photos.length;
+      currentPhotoId = photos[idx]?.id;
+      lbimg.src = photos[idx].name;
+      updateLightboxLikeButton();
     }
     function prev(){
-      idx = (idx - 1 + IMAGES.length) % IMAGES.length;
-      lbimg.src = IMAGES[idx];
+      idx = (idx - 1 + photos.length) % photos.length;
+      currentPhotoId = photos[idx]?.id;
+      lbimg.src = photos[idx].name;
+      updateLightboxLikeButton();
     }
-
-    IMAGES.forEach((name,i)=>{
-      const fig = document.createElement("figure");
-      fig.className = "photo";
-      const img = document.createElement("img");
-      img.src = name;
-      img.alt = "Muffin photo";
-      img.loading = "lazy";
-      fig.appendChild(img);
-      fig.addEventListener("click", ()=>openLB(i));
-      gallery.appendChild(fig);
-    });
 
     document.getElementById("next").addEventListener("click", next);
     document.getElementById("prev").addEventListener("click", prev);
     document.getElementById("close").addEventListener("click", closeLB);
+    
+    // Lightbox like button
+    document.getElementById("lbLikeBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (currentPhotoId) {
+        likePhoto(currentPhotoId);
+        const btn = document.getElementById("lbLikeBtn");
+        btn.classList.add("liked");
+      }
+    });
 
     lb.addEventListener("click", e => { if (e.target === lb) closeLB(); });
     document.addEventListener("keydown", e => {
@@ -317,6 +452,9 @@
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
     });
+
+    // Initialize
+    loadPhotos();
   </script>
 
 </body>

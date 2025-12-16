@@ -5,8 +5,11 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
+    types: [opened, synchronize, reopened]
+  
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   sonar_analysis:
@@ -16,9 +19,31 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "arn:aws:iam::424851482428:role/abc"
+          role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
           aws-region: us-east-1
-      
-      - name: Sync site folder to S3
+
+      - name: Install sonar
+        run: npm install -g @sonar/scan
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
         run: |
-          aws s3 sync ./site s3://blog-hosting-cat-1 --delete
+          cd backend
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd backend
+          npm run lint || true
+      
+      - name: PWD
+        run: pwd
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@5ffbad44543237d1b339a5ed57a774432e19f3e4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

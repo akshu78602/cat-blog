@@ -1,0 +1,44 @@
+name: deploy to eks
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'k8s/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'k8s/**'
+  
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
+          aws-region: us-east-1
+
+      - name: install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      - name: configure kubectl for EKS
+        run: |
+          aws eks update-kubeconfig --name cat-blog --region us-east-1
+
+      - name: get cluster info
+        run: |
+          kubectl cluster-info
+
+      - name: apply kubernetes manifests
+        run: |
+          kubectl apply -f k8s/
