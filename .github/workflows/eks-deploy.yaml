@@ -42,3 +42,4 @@ jobs:
       - name: apply kubernetes manifests
         run: |
           kubectl apply -f k8s/
+        environment: qa
