@@ -52,5 +52,5 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.organization=akshu78602-cat-blog
-            -Dsonar.projectKey=my-akshu78602_cat-blog
+            -Dsonar.organization=akshu78602_cat-blog
+            -Dsonar.projectKey=akshu78602
