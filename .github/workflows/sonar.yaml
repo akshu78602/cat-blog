@@ -46,3 +46,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_URL: https://sonarcloud.io
+        with:
+          sonar.projectKey: akshukumar-cat-blog
+          sonar.organization: akshu78602
