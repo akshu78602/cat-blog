@@ -8,7 +8,7 @@ on:
     branches:
       - master
   
-permssions:
+permissions:
   contents: read
   id-token: write
 
@@ -22,6 +22,9 @@ jobs:
         with:
           role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
           aws-region: us-east-1
+
+      - name: Install sonar
+        run: npm install -g @sonar/scan
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -39,9 +42,7 @@ jobs:
           npm run lint || true
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@master
+        uses: SonarSource/sonarqube-scan-action@v7.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          projectBaseDir: .
+          SONAR_URL: https://sonarcloud.io
