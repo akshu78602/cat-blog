@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: cat-blog-api:latest
+        image: cat-blogs:IMAGE_TAG
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
