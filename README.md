@@ -24,28 +24,25 @@ cat-blog/
 ## Features
 
 ### Frontend
-- Beautiful, responsive cat blog UI
-- Photo gallery with lightbox
+- Beautiful, responsive cat blog UI with dark theme
+- Interactive photo gallery with lightbox viewer
+- **Like buttons** - Click to like photos, see like counts in real-time
 - Real-time integration with backend API
+- Keyboard navigation (arrow keys, escape) in lightbox
+- Mobile-responsive design
 
 ### Backend API
 - RESTful API endpoints
 - Photo management
-- Like functionality
-- Comments system
-- Visitor analytics
+- **Like functionality** - Increment and track photo likes
 - Health check endpoint
 
 ## API Endpoints
 
 - `GET /health` - Health check
-- `GET /api/photos` - Get all photos
+- `GET /api/photos` - Get all photos with like counts
 - `GET /api/photos/:id` - Get photo by ID
-- `POST /api/photos/:id/like` - Like a photo
-- `GET /api/photos/:id/comments` - Get comments for a photo
-- `POST /api/photos/:id/comments` - Add a comment
-- `GET /api/analytics/visitors` - Get visitor count
-- `GET /api/analytics/summary` - Get analytics summary
+- `POST /api/photos/:id/like` - Like a photo (increments like count)
 
 ## Local Development
 
@@ -59,12 +56,20 @@ npm run dev  # Runs on http://localhost:3000
 
 ### Frontend
 
-Open `site/index.html` in a browser or use a local server:
+**Important**: The frontend needs to be served via HTTP (not file://) to work with the API due to CORS.
 
 ```bash
+# Terminal 1: Start backend
+cd backend
+npm install
+npm start  # Runs on http://localhost:3000
+
+# Terminal 2: Start frontend server
 cd site
 python3 -m http.server 8000
 ```
+
+Then open `http://localhost:8000` in your browser.
 
 ## Docker Build
 
@@ -120,9 +125,20 @@ This project demonstrates:
 ✅ **Monitoring** - Health checks and readiness probes  
 ✅ **Best Practices** - Proper error handling, CORS, security headers  
 
+## Data Storage
+
+**Current Status**: Data is stored **in-memory** (not persistent)
+- ✅ Works for development and testing
+- ❌ Data is lost when the server restarts
+- ⚠️ For production, integrate with your database (handled in separate Terraform repo)
+
+**What's stored in memory:**
+- Photo likes count
+- Photo metadata
+
 ## Next Steps (Production Enhancements)
 
-- Add database (PostgreSQL/DynamoDB) for persistent storage
+- ⚠️ **Database Integration**: Connect to PostgreSQL database (handled in separate Terraform repo)
 - Add authentication/authorization
 - Implement rate limiting
 - Add logging and monitoring (CloudWatch, Prometheus)
