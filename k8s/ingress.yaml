@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-origin: "*"  # Allow CORS from S3/CloudFront
 spec:
   rules:
-  - host: api.cat-blog.local  # Change to your API domain/subdomain
+  - host: api.cat-blog.local
     http:
       paths:
       - path: /

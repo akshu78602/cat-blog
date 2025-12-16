@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 
 const app = express();
@@ -11,11 +12,14 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// In-memory data store
+// In-memory data store (replace with database in production)
 let photos = [
   { id: '1', name: 'test.jpg', title: 'Muffin Portrait', likes: 0 },
   { id: '2', name: '4am.jpg', title: '4 AM Adventure', likes: 0 }
 ];
+
+let comments = [];
+let visitorCount = 0;
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -51,6 +55,49 @@ app.post('/api/photos/:id/like', (req, res) => {
   res.json({ photo });
 });
 
+// Get comments for a photo
+app.get('/api/photos/:id/comments', (req, res) => {
+  const photoComments = comments.filter(c => c.photoId === req.params.id);
+  res.json({ comments: photoComments });
+});
+
+// Add a comment
+app.post('/api/photos/:id/comments', (req, res) => {
+  const { author, text } = req.body;
+  if (!text || !text.trim()) {
+    return res.status(400).json({ error: 'Comment text is required' });
+  }
+
+  const comment = {
+    id: uuidv4(),
+    photoId: req.params.id,
+    author: author || 'Anonymous',
+    text: text.trim(),
+    timestamp: new Date().toISOString()
+  };
+
+  comments.push(comment);
+  res.status(201).json({ comment });
+});
+
+// Get visitor count
+app.get('/api/analytics/visitors', (req, res) => {
+  visitorCount++;
+  res.json({ count: visitorCount });
+});
+
+// Get analytics summary
+app.get('/api/analytics/summary', (req, res) => {
+  const totalLikes = photos.reduce((sum, p) => sum + (p.likes || 0), 0);
+  const totalComments = comments.length;
+  
+  res.json({
+    totalPhotos: photos.length,
+    totalLikes,
+    totalComments,
+    totalVisitors: visitorCount
+  });
+});
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -60,7 +107,7 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/health',
       photos: '/api/photos',
-      like: '/api/photos/:id/like'
+      analytics: '/api/analytics/visitors'
     }
   });
 });
@@ -82,5 +129,4 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
 
