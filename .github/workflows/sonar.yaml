@@ -44,13 +44,7 @@ jobs:
       - name: PWD
         run: pwd
 
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v7.0.0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_URL: https://sonarcloud.io
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.organization=akshu78602
-            -Dsonar.projectKey=akshu78602_cat-blog
