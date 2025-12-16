@@ -40,6 +40,9 @@ jobs:
         run: |
           cd backend
           npm run lint || true
+      
+      - name: PWD
+        run: pwd
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v7.0.0
@@ -47,5 +50,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_URL: https://sonarcloud.io
         with:
-          sonar.projectKey: akshukumar-cat-blog
-          sonar.organization: akshu78602
+          projectBaseDir: .
+          args: >
+            -Dsonar.organization=akshu78602-cat-blog
+            -Dsonar.projectKey=my-akshu78602_cat-blog
