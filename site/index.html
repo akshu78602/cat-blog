@@ -269,42 +269,101 @@
   <footer class="site-footer">Made with ❤️ for Muffin</footer>
 
   <script>
-    const IMAGES = ["test.jpg"];
+    // API configuration - adjust this to your API endpoint
+    // For production, point to your EKS ingress endpoint
+    const API_BASE = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3000' 
+      : 'https://api.yourdomain.com';  // Update with your actual API domain
+    
+    let photos = [];
+    let currentPhotoId = null;
 
     const gallery = document.getElementById("gallery");
     const lb = document.getElementById("lightbox");
     const lbimg = document.getElementById("lbimg");
     let idx = 0;
 
+    // Fetch photos from API
+    async function loadPhotos() {
+      try {
+        const response = await fetch(`${API_BASE}/api/photos`);
+        const data = await response.json();
+        photos = data.photos || [];
+        renderGallery();
+        updateVisitorCount();
+      } catch (error) {
+        console.error('Failed to load photos:', error);
+        // Fallback to static images
+        photos = [{ id: '1', name: 'test.jpg', title: 'Muffin Portrait', likes: 0 }];
+        renderGallery();
+      }
+    }
+
+    // Render gallery
+    function renderGallery() {
+      gallery.innerHTML = '';
+      photos.forEach((photo, i) => {
+        const fig = document.createElement("figure");
+        fig.className = "photo";
+        const img = document.createElement("img");
+        img.src = photo.name;
+        img.alt = photo.title || "Muffin photo";
+        img.loading = "lazy";
+        fig.appendChild(img);
+        fig.addEventListener("click", () => openLB(i));
+        gallery.appendChild(fig);
+      });
+    }
+
+    // Like a photo
+    async function likePhoto(photoId) {
+      try {
+        const response = await fetch(`${API_BASE}/api/photos/${photoId}/like`, {
+          method: 'POST'
+        });
+        const data = await response.json();
+        const photo = photos.find(p => p.id === photoId);
+        if (photo) {
+          photo.likes = data.photo.likes;
+        }
+      } catch (error) {
+        console.error('Failed to like photo:', error);
+      }
+    }
+
+    // Update visitor count
+    async function updateVisitorCount() {
+      try {
+        const response = await fetch(`${API_BASE}/api/analytics/visitors`);
+        const data = await response.json();
+        // You can display this somewhere if needed
+        console.log('Visitor count:', data.count);
+      } catch (error) {
+        console.error('Failed to update visitor count:', error);
+      }
+    }
+
     function openLB(i){
       idx = i;
-      lbimg.src = IMAGES[idx];
+      currentPhotoId = photos[i]?.id;
+      lbimg.src = photos[i].name;
       lb.classList.add("open");
     }
     function closeLB(){
       lb.classList.remove("open");
       lbimg.src = "";
+      currentPhotoId = null;
     }
     function next(){
-      idx = (idx + 1) % IMAGES.length;
-      lbimg.src = IMAGES[idx];
+      idx = (idx + 1) % photos.length;
+      currentPhotoId = photos[idx]?.id;
+      lbimg.src = photos[idx].name;
     }
     function prev(){
-      idx = (idx - 1 + IMAGES.length) % IMAGES.length;
-      lbimg.src = IMAGES[idx];
+      idx = (idx - 1 + photos.length) % photos.length;
+      currentPhotoId = photos[idx]?.id;
+      lbimg.src = photos[idx].name;
     }
-
-    IMAGES.forEach((name,i)=>{
-      const fig = document.createElement("figure");
-      fig.className = "photo";
-      const img = document.createElement("img");
-      img.src = name;
-      img.alt = "Muffin photo";
-      img.loading = "lazy";
-      fig.appendChild(img);
-      fig.addEventListener("click", ()=>openLB(i));
-      gallery.appendChild(fig);
-    });
 
     document.getElementById("next").addEventListener("click", next);
     document.getElementById("prev").addEventListener("click", prev);
@@ -317,6 +376,9 @@
       if (e.key === "ArrowRight") next();
       if (e.key === "ArrowLeft") prev();
     });
+
+    // Initialize
+    loadPhotos();
   </script>
 
 </body>

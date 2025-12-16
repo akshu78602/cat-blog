@@ -1,24 +1,43 @@
-# name: sonar analysis
+name: sonar analysis
 
-# on:
-#   push:
-#     branches:
-#       - master
-#   pull_request:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
-# jobs:
-#   sonar_analysis:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
+jobs:
+  sonar_analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-#       - uses: aws-actions/configure-aws-credentials@v4
-#         with:
-#           role-to-assume: "arn:aws:iam::424851482428:role/abc"
-#           aws-region: us-east-1
-      
-#       - name: Sync site folder to S3
-#         run: |
-#           aws s3 sync ./site s3://blog-hosting-cat-1 --delete
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
+          aws-region: us-east-1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run ESLint
+        run: |
+          cd backend
+          npm run lint || true
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          projectBaseDir: .

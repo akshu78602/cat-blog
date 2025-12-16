@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
+    paths:
+      - 'site/**'  # Only run when site files change
+      - '.github/workflows/build.yaml'
 
 permissions:
   contents: read
