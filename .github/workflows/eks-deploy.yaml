@@ -5,10 +5,12 @@ on:
     branches: [ master ]
     paths:
       - "k8s/**"
+      - "backend/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - "k8s/**"
+      - "backend/**"
 
 permissions:
   contents: read
@@ -62,12 +64,13 @@ jobs:
       - name: Configure kubectl for EKS
         run: aws eks update-kubeconfig --name cat-blog --region us-east-1
 
-      - name: Cluster info
-        run: kubectl cluster-info
-        
       - name: Apply manifests
         run: kubectl apply -f k8s/
 
+      - name: Update deployment image (IMPORTANT)
+        run: |
+          IMAGE_URI=424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:${{ github.sha }}
+          kubectl set image deployment/cat-blogs cat-blogs=$IMAGE_URI --namespace default
+
       - name: Verify rollout
         run: kubectl rollout status deployment/cat-blogs --namespace default
-
