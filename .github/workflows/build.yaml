@@ -25,9 +25,3 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::424851482428:role/ci_cd_role
           aws-region: us-east-1
-
-      - name: Upload to S3
-        run: aws s3 cp site/ s3://blog-hosting-cat-1/ --recursive
-      - name: Invalidate CloudFront Cache
-        run: |
-          aws cloudfront create-invalidation --distribution-id E2QEXAMPLEC7 --paths "/*"
