@@ -29,5 +29,5 @@ jobs:
       - name: Upload to S3
         run: aws s3 cp site/ s3://blog-hosting-cat-1/ --recursive
       - name: Invalidate CloudFront Cache
-        rules: |
+        run: |
           aws cloudfront create-invalidation --distribution-id E2QEXAMPLEC7 --paths "/*"
