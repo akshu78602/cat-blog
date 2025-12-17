@@ -6,10 +6,10 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "*"  # Allow CORS from S3/CloudFront
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
 spec:
   rules:
-  - host: api.cat-blog.local
+  - host: api.littlecat.net
     http:
       paths:
       - path: /

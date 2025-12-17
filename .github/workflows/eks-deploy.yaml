@@ -1,44 +1,76 @@
 name: deploy to eks
+
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
     paths:
-      - 'k8s/**'
+      - "k8s/**"
+      - "backend/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'k8s/**'
-  
+      - "k8s/**"
+      - "backend/**"
+
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  deploy:
+  build_and_push_ecr:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
 
-      - uses: aws-actions/configure-aws-credentials@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
+          role-to-assume: arn:aws:iam::424851482428:role/ci_cd_role
           aws-region: us-east-1
 
-      - name: install kubectl
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 \
+            | docker login --username AWS --password-stdin 424851482428.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build and push image
+        run: |
+          IMAGE_URI=424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:${{ github.sha }}
+          docker build -t "$IMAGE_URI" -f k8s/Dockerfile ./backend
+          docker push "$IMAGE_URI"
+
+  apply_kubernetes_manifests:
+    needs: build_and_push_ecr
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::424851482428:role/ci_cd_role
+          aws-region: us-east-1
+
+      - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
-          sudo mv kubectl /usr/local/bin/
+          sudo mv kubectl /usr/local/bin/kubectl
 
-      - name: configure kubectl for EKS
-        run: |
-          aws eks update-kubeconfig --name cat-blog --region us-east-1
+      - name: Configure kubectl for EKS
+        run: aws eks update-kubeconfig --name cat-blog --region us-east-1
 
-      - name: get cluster info
-        run: |
-          kubectl cluster-info
+      - name: Apply manifests
+        run: kubectl apply -f k8s/
 
-      - name: apply kubernetes manifests
+      - name: Update deployment image (IMPORTANT)
         run: |
-          kubectl apply -f k8s/
+          IMAGE_URI=424851482428.dkr.ecr.us-east-1.amazonaws.com/cat-blogs:${{ github.sha }}
+          kubectl set image deployment/cat-blogs cat-blogs=$IMAGE_URI --namespace default
+
+      - name: Verify rollout
+        run: kubectl rollout status deployment/cat-blogs --namespace default
