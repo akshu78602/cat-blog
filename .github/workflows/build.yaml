@@ -1,11 +1,13 @@
-name: build 
+name: build
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master ]
+    paths:
+      - "site/**"
+      - ".github/workflows/build.yaml"
   pull_request:
-      - master
+    branches: [ master ]
 
 permissions:
   contents: read
@@ -15,13 +17,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: "arn:aws:iam::424851482428:role/ci_cd_role"
+          role-to-assume: arn:aws:iam::424851482428:role/ci_cd_role
           aws-region: us-east-1
 
       - name: Upload to S3
-        run: aws s3 cp ./site s3://blog-hosting-cat-1/ --recursive
-        
+        run: aws s3 cp site/ s3://blog-hosting-cat-1/ --recursive
+      - name: Invalidate CloudFront Cache
+        rules: |
+          aws cloudfront create-invalidation --distribution-id E2QEXAMPLEC7 --paths "/*"
