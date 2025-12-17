@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Muffin’s Cat Blog 🐱</title>
+  <title>Muffin's Cat Blog 🐱</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Muffin the cat — a cozy photo gallery." />
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
@@ -14,283 +14,1183 @@
 
   <style>
     :root{
-      --bg:#0f1020; --card:#161938; --text:#e9edf3; --muted:#a7b0c8;
-      --accent:#8bd3ff; --ring:rgba(139,211,255,.35);
-      --radius:18px; --shadow:0 10px 28px rgba(0,0,0,.35);
+      --bg:#0a0b1a; --card:#14162e; --text:#e9edf3; --muted:#a7b0c8;
+      --accent:#8bd3ff; --accent2:#ffd28b; --ring:rgba(139,211,255,.35);
+      --radius:20px; --shadow:0 20px 40px rgba(0,0,0,.4);
+      --shadow-lg:0 30px 60px rgba(0,0,0,.5);
     }
     *{box-sizing:border-box;}
 
+    html{scroll-behavior:smooth;}
     html,body{
       margin:0;
       background:
-        radial-gradient(1200px 800px at 10% -10%, #1b1e44 0%, var(--bg) 60%),
+        radial-gradient(1400px 900px at 15% -5%, #1b1e44 0%, var(--bg) 50%),
+        radial-gradient(1000px 700px at 85% 95%, #2a1e44 0%, var(--bg) 50%),
         var(--bg);
       color:var(--text);
       font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       font-size:16px;
       line-height:1.7;
       font-weight:400;
+      overflow-x:hidden;
+      position:relative;
     }
 
-    body{min-height:100vh;display:flex;flex-direction:column;}
-    .wrap{flex:1;}
+    body{
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      position:relative;
+    }
+
+    /* Background decorative elements */
+    .bg-decorations{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      overflow:hidden;
+    }
+
+    .bg-element{
+      position:absolute;
+      opacity:0.12;
+      color:var(--accent);
+      font-size:40px;
+      animation:float 20s infinite ease-in-out;
+      filter:drop-shadow(0 0 10px rgba(139,211,255,0.2));
+    }
+
+    .bg-element:nth-child(1){top:8%;left:3%;animation-delay:0s;font-size:48px;opacity:0.14;}
+    .bg-element:nth-child(2){top:12%;right:6%;animation-delay:1.5s;font-size:32px;opacity:0.11;}
+    .bg-element:nth-child(3){top:18%;left:12%;animation-delay:3s;font-size:44px;opacity:0.13;}
+    .bg-element:nth-child(4){top:22%;right:12%;animation-delay:0.5s;font-size:28px;opacity:0.1;}
+    .bg-element:nth-child(5){top:28%;left:8%;animation-delay:2.2s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(6){top:32%;right:18%;animation-delay:4s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(7){top:38%;left:15%;animation-delay:1.2s;font-size:42px;opacity:0.13;}
+    .bg-element:nth-child(8){top:42%;right:8%;animation-delay:3.5s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(9){top:48%;left:5%;animation-delay:0.8s;font-size:40px;opacity:0.12;}
+    .bg-element:nth-child(10){top:52%;right:15%;animation-delay:2.8s;font-size:36px;opacity:0.11;}
+    .bg-element:nth-child(11){top:58%;left:20%;animation-delay:1.8s;font-size:34px;opacity:0.13;}
+    .bg-element:nth-child(12){top:62%;right:22%;animation-delay:4.2s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(13){top:68%;left:10%;animation-delay:0.3s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(14){top:72%;right:10%;animation-delay:3.2s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(15){top:78%;left:18%;animation-delay:1.5s;font-size:40px;opacity:0.13;}
+    .bg-element:nth-child(16){top:82%;right:5%;animation-delay:2.5s;font-size:28px;opacity:0.1;}
+    .bg-element:nth-child(17){top:15%;left:25%;animation-delay:0.6s;font-size:33px;opacity:0.11;}
+    .bg-element:nth-child(18){top:25%;right:25%;animation-delay:3.8s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(19){top:35%;left:35%;animation-delay:1.4s;font-size:31px;opacity:0.1;}
+    .bg-element:nth-child(20){top:45%;right:30%;animation-delay:4.5s;font-size:39px;opacity:0.13;}
+    .bg-element:nth-child(21){top:55%;left:45%;animation-delay:0.9s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(22){top:65%;right:35%;animation-delay:2.3s;font-size:33px;opacity:0.12;}
+    .bg-element:nth-child(23){top:75%;left:55%;animation-delay:1.7s;font-size:37px;opacity:0.1;}
+    .bg-element:nth-child(24){top:85%;right:20%;animation-delay:3.6s;font-size:29px;opacity:0.11;}
+    .bg-element:nth-child(25){top:20%;left:50%;animation-delay:0.4s;font-size:41px;opacity:0.13;}
+    .bg-element:nth-child(26){top:30%;right:45%;animation-delay:2.7s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(27){top:40%;left:60%;animation-delay:1.1s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(28){top:50%;right:50%;animation-delay:4.1s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(29){top:60%;left:70%;animation-delay:0.7s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(30){top:70%;right:60%;animation-delay:3.3s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(31){top:5%;left:40%;animation-delay:1.9s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(32){top:10%;right:35%;animation-delay:0.2s;font-size:42px;opacity:0.13;}
+    .bg-element:nth-child(33){top:50%;left:75%;animation-delay:2.6s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(34){top:88%;right:28%;animation-delay:4.8s;font-size:31px;opacity:0.1;}
+    .bg-element:nth-child(35){top:6%;left:65%;animation-delay:1.3s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(36){top:14%;right:42%;animation-delay:3.9s;font-size:33px;opacity:0.11;}
+    .bg-element:nth-child(37){top:26%;left:80%;animation-delay:0.5s;font-size:39px;opacity:0.13;}
+    .bg-element:nth-child(38){top:34%;right:55%;animation-delay:2.4s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(39){top:46%;left:85%;animation-delay:1.6s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(40){top:54%;right:65%;animation-delay:4.3s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(41){top:64%;left:90%;animation-delay:0.8s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(42){top:74%;right:75%;animation-delay:3.1s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(43){top:84%;left:95%;animation-delay:1.8s;font-size:29px;opacity:0.11;}
+    .bg-element:nth-child(44){top:16%;left:55%;animation-delay:2.9s;font-size:40px;opacity:0.13;}
+    .bg-element:nth-child(45){top:24%;right:70%;animation-delay:0.6s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(46){top:36%;left:42%;animation-delay:4.4s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(47){top:44%;right:80%;animation-delay:1.2s;font-size:31px;opacity:0.1;}
+    .bg-element:nth-child(48){top:56%;left:28%;animation-delay:3.7s;font-size:37px;opacity:0.12;}
+    /* Additional positioning for more elements */
+    .bg-element:nth-child(49){top:58%;right:28%;animation-delay:1.9s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(50){top:62%;left:32%;animation-delay:4.1s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(51){top:66%;right:32%;animation-delay:2.3s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(52){top:70%;left:36%;animation-delay:0.7s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(53){top:74%;right:36%;animation-delay:3.9s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(54){top:78%;left:40%;animation-delay:1.5s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(55){top:82%;right:40%;animation-delay:4.3s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(56){top:86%;left:44%;animation-delay:2.7s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(57){top:90%;right:44%;animation-delay:0.3s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(58){top:14%;left:48%;animation-delay:3.1s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(59){top:18%;right:48%;animation-delay:1.7s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(60){top:22%;left:52%;animation-delay:4.5s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(61){top:26%;right:52%;animation-delay:0.9s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(62){top:30%;left:56%;animation-delay:2.5s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(63){top:34%;right:56%;animation-delay:3.7s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(64){top:38%;left:60%;animation-delay:1.1s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(65){top:42%;right:60%;animation-delay:4.7s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(66){top:46%;left:64%;animation-delay:2.9s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(67){top:50%;right:64%;animation-delay:0.5s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(68){top:54%;left:68%;animation-delay:3.3s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(69){top:58%;right:68%;animation-delay:1.3s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(70){top:62%;left:72%;animation-delay:4.9s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(71){top:66%;right:72%;animation-delay:2.1s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(72){top:70%;left:76%;animation-delay:0.7s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(73){top:74%;right:76%;animation-delay:3.5s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(74){top:78%;left:80%;animation-delay:1.9s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(75){top:82%;right:80%;animation-delay:4.1s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(76){top:86%;left:84%;animation-delay:2.3s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(77){top:90%;right:84%;animation-delay:0.1s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(78){top:12%;left:88%;animation-delay:3.7s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(79){top:16%;right:88%;animation-delay:1.5s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(80){top:20%;left:92%;animation-delay:4.3s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(81){top:24%;right:92%;animation-delay:0.9s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(82){top:28%;left:96%;animation-delay:2.5s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(83){top:32%;right:96%;animation-delay:3.9s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(84){top:36%;left:1%;animation-delay:1.1s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(85){top:40%;right:1%;animation-delay:4.5s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(86){top:44%;left:4%;animation-delay:2.7s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(87){top:48%;right:4%;animation-delay:0.3s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(88){top:52%;left:7%;animation-delay:3.1s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(89){top:56%;right:7%;animation-delay:1.7s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(90){top:60%;left:11%;animation-delay:4.7s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(91){top:64%;right:11%;animation-delay:0.5s;font-size:36px;opacity:0.12;}
+    .bg-element:nth-child(92){top:68%;left:14%;animation-delay:2.9s;font-size:34px;opacity:0.11;}
+    .bg-element:nth-child(93){top:72%;right:14%;animation-delay:3.3s;font-size:32px;opacity:0.1;}
+    .bg-element:nth-child(94){top:76%;left:17%;animation-delay:1.3s;font-size:38px;opacity:0.12;}
+    .bg-element:nth-child(95){top:80%;right:17%;animation-delay:4.9s;font-size:30px;opacity:0.1;}
+    .bg-element:nth-child(96){top:84%;left:21%;animation-delay:2.1s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(97){top:88%;right:21%;animation-delay:0.7s;font-size:33px;opacity:0.1;}
+    .bg-element:nth-child(98){top:92%;left:24%;animation-delay:3.5s;font-size:37px;opacity:0.12;}
+    .bg-element:nth-child(99){top:96%;right:24%;animation-delay:1.9s;font-size:35px;opacity:0.11;}
+    .bg-element:nth-child(100){top:4%;left:27%;animation-delay:4.1s;font-size:33px;opacity:0.1;}
+
+    @keyframes float{
+      0%,100%{transform:translate(0,0) rotate(0deg);}
+      25%{transform:translate(20px,-20px) rotate(5deg);}
+      50%{transform:translate(-15px,15px) rotate(-5deg);}
+      75%{transform:translate(10px,10px) rotate(3deg);}
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width:1400px;
+      margin:0 auto;
+      padding:0 24px;
+      width:100%;
+    }
 
     img{max-width:100%;height:auto;display:block;}
-    a{color:var(--accent);text-decoration:none;}
-    a:hover{text-decoration:underline;}
 
-    .wrap{max-width:980px;margin:56px auto;padding:0 18px;}
+    /* Hero Header */
+    .hero-header{
+      padding:60px 0 40px;
+      text-align:center;
+      position:relative;
+      animation:fadeInUp .8s ease;
+    }
 
-    .hero{
-      background:linear-gradient(135deg, rgba(139,211,255,.12), rgba(255,210,139,.08));
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:calc(var(--radius) + 6px);
-      padding:28px 28px 12px;
-      box-shadow:var(--shadow);
+    @keyframes fadeInUp{
+      from{opacity:0;transform:translateY(30px);}
+      to{opacity:1;transform:translateY(0);}
     }
 
     .badge{
       display:inline-flex;gap:8px;align-items:center;
-      background:rgba(255,255,255,.05);
+      background:rgba(139,211,255,.1);
+      border:1px solid rgba(139,211,255,.2);
+      padding:10px 18px;border-radius:999px;
+      color:var(--accent);font-size:14px;margin-bottom:20px;
+      font-weight:500;
+      backdrop-filter:blur(10px);
+    }
+
+    .title{
+      font-size:clamp(42px,6vw,72px);
+      margin:16px 0 20px;
+      font-weight:700;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      line-height:1.1;
+    }
+
+    .subtitle{
+      color:var(--muted);
+      font-size:clamp(16px,2vw,20px);
+      margin:0 auto 24px;
+      max-width:600px;
+      line-height:1.6;
+    }
+
+    .stats{
+      display:flex;gap:24px;justify-content:center;flex-wrap:wrap;
+      margin-top:24px;
+    }
+
+    .stat-item{
+      background:rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.08);
-      padding:6px 12px;border-radius:999px;
-      color:var(--muted);font-size:14px;margin-bottom:10px;
+      padding:20px 32px;border-radius:16px;
+      backdrop-filter:blur(10px);
+      min-width:120px;
     }
 
-    .title{font-size:clamp(30px,4vw,46px);margin:4px 0 10px;font-weight:600;}
-    .subtitle{color:var(--muted);margin:0 0 18px;font-size:15px;}
-
-    .status{
-      display:inline-flex;gap:8px;align-items:center;
-      background:#0e1326;border:1px dashed rgba(139,211,255,.45);
-      color:var(--accent);
-      padding:8px 12px;border-radius:10px;
-      font-family:ui-monospace,Menlo,Consolas;
-      font-size:13px;
+    .stat-number{
+      font-size:32px;font-weight:700;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      display:block;
     }
 
-    .grid{
-      margin-top:22px;
-      display:grid;
-      grid-template-columns:repeat(12,1fr);
-      gap:16px;
+    .stat-label{
+      color:var(--muted);font-size:13px;margin-top:4px;
     }
 
-    .card{
-      grid-column:span 12;
-      background:var(--card);
-      border:1px solid rgba(255,255,255,.06);
+    /* Featured Section */
+    .featured-section{
+      margin:40px 0;
+      animation:fadeInUp 1s ease .2s both;
+    }
+
+    .featured-card{
+      background:linear-gradient(135deg, rgba(139,211,255,.08), rgba(255,210,139,.05));
+      border:1px solid rgba(255,255,255,.1);
       border-radius:var(--radius);
-      box-shadow:var(--shadow);
+      padding:0;
+      box-shadow:var(--shadow-lg);
       overflow:hidden;
+      position:relative;
     }
 
-    @media(min-width:720px){
-      .card.half{grid-column:span 6;}
+    .featured-image{
+      width:100%;aspect-ratio:21/9;overflow:hidden;
+      position:relative;
     }
 
-    .inner{padding:20px;}
-    h3{margin:0 0 10px;font-size:20px;font-weight:600;}
-    .muted{color:var(--muted);}
+    .featured-image img{
+      width:100%;height:100%;
+      object-fit:cover;
+      transition:transform .6s ease;
+    }
 
-    /* Gallery */
+    .featured-card:hover .featured-image img{
+      transform:scale(1.05);
+    }
+
+    .featured-content{
+      padding:32px;
+    }
+
+    .featured-label{
+      display:inline-block;
+      background:rgba(0,0,0,.4);
+      border:1px solid rgba(255,255,255,.2);
+      backdrop-filter:blur(8px);
+      padding:8px 16px;border-radius:999px;
+      color:#fff;font-size:13px;font-weight:600;
+      margin-bottom:20px;
+    }
+
+    .featured-title{
+      font-size:clamp(28px,4vw,40px);
+      margin:0 0 16px;
+      font-weight:600;
+    }
+
+    .featured-text{
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.8;
+      margin:0;
+    }
+
+    /* Gallery Section */
+    .gallery-section{
+      margin:40px 0;
+      animation:fadeInUp 1s ease .4s both;
+    }
+
+    .section-header{
+      text-align:center;
+      margin-bottom:32px;
+    }
+
+    .section-title{
+      font-size:clamp(32px,4vw,48px);
+      font-weight:700;
+      margin:0 0 12px;
+      background:linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+
+    .section-subtitle{
+      color:var(--muted);
+      font-size:16px;
+      margin:0;
+    }
+
     .gallery{
       display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-      gap:14px;padding:14px;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:20px;
+      padding:0;
+    }
+
+    @media(min-width:1200px){
+      .gallery{
+        grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      }
     }
 
     .photo{
-      position:relative;border-radius:14px;overflow:hidden;
-      border:1px solid rgba(255,255,255,.07);
-      background:#0b0d1a;cursor:pointer;
+      position:relative;
+      border-radius:20px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      background:#0b0d1a;
+      cursor:pointer;
       aspect-ratio:4/3;
+      transition:all .3s cubic-bezier(0.4, 0, 0.2, 1);
+      animation:fadeInUp .6s ease both;
+    }
+
+    .photo:nth-child(1){animation-delay:.1s;}
+    .photo:nth-child(2){animation-delay:.15s;}
+    .photo:nth-child(3){animation-delay:.2s;}
+    .photo:nth-child(4){animation-delay:.25s;}
+    .photo:nth-child(5){animation-delay:.3s;}
+    .photo:nth-child(6){animation-delay:.35s;}
+    .photo:nth-child(7){animation-delay:.4s;}
+    .photo:nth-child(8){animation-delay:.45s;}
+
+    .photo:hover{
+      transform:translateY(-8px) scale(1.02);
+      box-shadow:0 20px 40px rgba(0,0,0,.5);
+      border-color:rgba(139,211,255,.3);
     }
 
     .photo img{
       width:100%;height:100%;
       object-fit:cover;
-      transition:transform .25s ease;
+      object-position:center center;
+      transition:transform .5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .photo:hover img{transform:scale(1.04);}
+    /* Special handling for portrait images to show face */
+    .photo[data-portrait="true"] img{
+      object-position:center top;
+    }
+
+    .photo:hover img{
+      transform:scale(1.1);
+    }
 
     .photo-overlay{
-      position:absolute;bottom:0;left:0;right:0;
-      background:linear-gradient(to top, rgba(0,0,0,.7), transparent);
-      padding:12px;display:flex;align-items:center;justify-content:space-between;
+      position:absolute;
+      bottom:0;left:0;right:0;
+      background:linear-gradient(to top, rgba(0,0,0,.9), transparent);
+      padding:20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
       opacity:1;
+      transition:all .3s ease;
+    }
+
+    .photo-title{
+      color:#fff;
+      font-size:14px;
+      font-weight:600;
+      margin:0;
+      flex:1;
     }
 
     .like-btn{
-      background:rgba(255,255,255,.1);
-      border:1px solid rgba(255,255,255,.2);
-      color:#fff;border-radius:8px;
-      padding:6px 12px;cursor:pointer;
-      font-size:13px;display:flex;align-items:center;gap:6px;
+      background:rgba(255,255,255,.15);
+      border:1px solid rgba(255,255,255,.3);
+      color:#fff;
+      border-radius:12px;
+      padding:10px 16px;
+      cursor:pointer;
+      font-size:13px;
+      display:flex;
+      align-items:center;
+      gap:8px;
       transition:all .2s ease;
+      backdrop-filter:blur(10px);
+      font-weight:600;
+      white-space:nowrap;
     }
-    .like-btn:hover{background:rgba(255,255,255,.2);transform:scale(1.05);}
-    .like-btn.liked{background:rgba(255,82,82,.3);border-color:rgba(255,82,82,.5);}
-    .like-count{color:#fff;font-size:13px;font-weight:500;}
 
-    /* STORY */
-    .story-banner{
-      position:relative;display:block;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.07);
+    .like-btn:hover{
+      background:rgba(255,255,255,.25);
+      transform:scale(1.1);
+    }
+
+    .like-btn.liked{
+      background:rgba(255,82,82,.5);
+      border-color:rgba(255,82,82,.7);
+    }
+
+    .like-btn.liked:hover{
+      background:rgba(255,82,82,.6);
+    }
+
+    .like-count{
+      color:#fff;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    /* About Muffin - Top Right Corner Box */
+    .about-muffin-box{
+      position:absolute;
+      top:20px;
+      right:20px;
+      background:rgba(20,22,46,.95);
+      border:1px solid rgba(139,211,255,.2);
+      border-radius:16px;
+      padding:16px 20px;
+      max-width:280px;
+      z-index:10;
+      backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,.4);
+      animation:fadeInUp .8s ease 1s both;
+      transition:transform .3s ease;
+    }
+
+    .about-muffin-box:hover{
+      transform:translateY(-2px);
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+    }
+
+    .about-muffin-title{
+      font-size:16px;
+      font-weight:600;
+      margin:0 0 8px;
+      color:var(--accent);
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    .about-muffin-text{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+      margin:0 0 12px;
+    }
+
+    .about-muffin-image{
+      width:100%;
+      border-radius:12px;
       overflow:hidden;
+      margin-top:12px;
+      border:1px solid rgba(139,211,255,.15);
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
     }
 
-    .story-banner .frame{
-      width:100%;aspect-ratio:16/9;overflow:hidden;
-    }
-
-    .story-banner img{
-      width:100%;height:100%;
+    .about-muffin-image img{
+      width:100%;
+      height:auto;
+      display:block;
       object-fit:cover;
-      object-position:75% 70%;
+      transition:transform .3s ease;
     }
 
-    .story-label{
-      position:absolute;left:14px;bottom:14px;
-      background:rgba(0,0,0,.45);
-      border:1px solid rgba(255,255,255,.2);
-      backdrop-filter:blur(4px);
-      padding:8px 12px;color:#fff;
-      border-radius:999px;font-weight:600;
+    .about-muffin-box:hover .about-muffin-image img{
+      transform:scale(1.05);
+    }
+
+    /* Top Left Quote Box */
+    .top-quote-box{
+      position:absolute;
+      top:80px;
+      left:20px;
+      background:rgba(20,22,46,.95);
+      border:1px solid rgba(255,210,139,.2);
+      border-radius:16px;
+      padding:14px 18px;
+      max-width:220px;
+      z-index:10;
+      backdrop-filter:blur(20px);
+      box-shadow:0 10px 30px rgba(0,0,0,.4);
+      animation:fadeInUp .8s ease 1.2s both;
+      transition:transform .3s ease;
+    }
+
+    .top-quote-box:hover{
+      transform:translateY(-2px);
+      box-shadow:0 15px 40px rgba(0,0,0,.5);
+    }
+
+    .top-quote-text{
+      color:var(--accent2);
+      font-size:13px;
+      line-height:1.5;
+      margin:0;
+      font-style:italic;
+      font-weight:500;
+    }
+
+    .top-quote-author{
+      color:var(--muted);
+      font-size:11px;
+      margin-top:6px;
+      text-align:right;
+    }
+
+    @media(max-width:1024px){
+      .about-muffin-box{
+        max-width:240px;
+        padding:12px 16px;
+      }
+      .top-quote-box{
+        max-width:200px;
+        padding:12px 16px;
+      }
+    }
+
+    @media(max-width:768px){
+      .about-muffin-box{
+        position:relative;
+        top:auto;
+        right:auto;
+        max-width:100%;
+        margin:0 0 20px;
+      }
+      .top-quote-box{
+        position:relative;
+        top:auto;
+        left:auto;
+        max-width:100%;
+        margin:0 0 20px;
+      }
+      
+      .hero-header{
+        padding-top:40px;
+      }
     }
 
     /* Footer */
     .site-footer{
-      text-align:center;color:var(--muted);font-size:14px;
-      padding:18px 12px;margin-top:24px;
+      text-align:center;
+      color:var(--muted);
+      font-size:15px;
+      padding:40px 24px 30px;
+      margin-top:40px;
       border-top:1px solid rgba(255,255,255,.08);
     }
 
     /* Lightbox */
     .lightbox{
-      position:fixed;inset:0;
-      background:rgba(0,0,0,.8);
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.95);
       display:none;
-      align-items:center;justify-content:center;
-      padding:20px;z-index:999;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:9999;
+      backdrop-filter:blur(10px);
+      animation:fadeIn .2s ease;
     }
 
-    .lightbox.open{display:flex;}
+    @keyframes fadeIn{
+      from{opacity:0;}
+      to{opacity:1;}
+    }
+
+    .lightbox.open{
+      display:flex;
+    }
 
     .lightbox img{
-      max-width:min(92vw,1200px);
-      max-height:82vh;
-      border-radius:16px;
-      box-shadow:0 20px 60px rgba(0,0,0,.6);
+      max-width:min(95vw,1400px);
+      max-height:90vh;
+      border-radius:24px;
+      box-shadow:0 30px 80px rgba(0,0,0,.8);
+      animation:zoomIn .3s ease;
+    }
+
+    @keyframes zoomIn{
+      from{transform:scale(.9);opacity:0;}
+      to{transform:scale(1);opacity:1;}
     }
 
     .lb-ui{
-      position:fixed;inset:0;
-      display:flex;align-items:center;
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
       justify-content:space-between;
-      padding:20px;
+      padding:30px;
+      pointer-events:none;
     }
 
     .lb-btn{
-      background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.18);
-      color:#fff;border-radius:12px;
-      padding:10px 14px;cursor:pointer;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;
+      border-radius:14px;
+      padding:14px 20px;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:600;
+      pointer-events:all;
+      transition:all .2s ease;
+      backdrop-filter:blur(10px);
     }
 
-    .lb-btn:hover{outline:2px solid var(--ring);}
-    .lb-close{position:absolute;top:16px;right:16px;}
+    .lb-btn:hover{
+      background:rgba(255,255,255,.25);
+      transform:scale(1.1);
+    }
+
+    .lb-close{
+      position:absolute;
+      top:30px;
+      right:30px;
+      width:44px;
+      height:44px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+    }
 
     .lb-actions{
-      position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
-      display:flex;gap:12px;align-items:center;
+      position:absolute;
+      bottom:40px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:16px;
+      align-items:center;
+      pointer-events:all;
     }
+
     .lb-like-btn{
-      background:rgba(255,255,255,.15);
-      border:1px solid rgba(255,255,255,.25);
-      color:#fff;border-radius:12px;
-      padding:10px 18px;cursor:pointer;
-      font-size:14px;display:flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.2);
+      border:1px solid rgba(255,255,255,.3);
+      color:#fff;
+      border-radius:14px;
+      padding:14px 24px;
+      cursor:pointer;
+      font-size:15px;
+      display:flex;
+      align-items:center;
+      gap:10px;
       transition:all .2s ease;
+      backdrop-filter:blur(10px);
+      font-weight:600;
     }
-    .lb-like-btn:hover{background:rgba(255,255,255,.25);}
-    .lb-like-btn.liked{background:rgba(255,82,82,.4);border-color:rgba(255,82,82,.6);}
+
+    .lb-like-btn:hover{
+      background:rgba(255,255,255,.3);
+      transform:scale(1.1);
+    }
+
+    .lb-like-btn.liked{
+      background:rgba(255,82,82,.5);
+      border-color:rgba(255,82,82,.7);
+    }
+
+    @media(max-width:768px){
+      .wrap{padding:0 16px;}
+      .hero-header{padding:60px 0 40px;}
+      .stats{gap:16px;}
+      .stat-item{padding:16px 24px;min-width:100px;}
+      .stat-number{font-size:24px;}
+      .gallery{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px;}
+      .featured-content{padding:24px;}
+      .about-card{padding:32px 24px;}
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- Background decorative elements -->
+  <div class="bg-decorations">
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🐱</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🧶</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🐭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎾</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🐟</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎀</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🌟</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">❤️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💫</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎈</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎯</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎵</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎸</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎹</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎺</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎻</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎲</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎰</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎮</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎊</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎉</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎁</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎂</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍰</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍫</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍩</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍧</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍦</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">☕</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍵</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥛</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🍼</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🌙</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">⭐</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">☀️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">☁️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🌈</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🌠</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💝</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💖</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💗</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💓</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💕</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💞</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💟</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">❣️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💔</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🧡</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💛</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💚</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💙</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💜</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖤</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🤍</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🤎</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💯</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🔥</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💥</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">⚡</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">☄️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💢</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💤</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">👑</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎩</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎵</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎸</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎹</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎺</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎻</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎲</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎰</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎮</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎯</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎵</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎸</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎹</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎺</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎻</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎲</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎰</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎮</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🦴</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥎</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏐</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏀</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">⚽</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏈</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎱</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎳</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏓</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏸</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥊</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥋</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎽</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏅</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎖️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🏆</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥇</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥈</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🥉</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎗️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎫</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎟️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖼️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🎨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖌️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖍️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✏️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✒️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖊️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖋️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📝</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📄</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📃</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📜</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📋</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📊</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📈</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📉</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📌</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📍</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📎</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖇️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📏</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📐</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✂️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗃️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗄️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗂️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📅</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📆</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗒️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗓️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📇</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗃️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗳️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✉️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📧</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📩</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📤</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📥</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📦</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📫</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📮</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗳️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✏️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✒️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖊️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖋️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖌️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🖍️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📝</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">💼</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📁</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📂</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗂️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📅</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📆</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗒️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗓️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📇</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗃️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗳️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">✉️</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📧</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📨</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📩</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📤</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📥</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📦</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📫</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📪</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📬</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📭</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">📮</div>
+    <div class="bg-element">🐾</div>
+    <div class="bg-element">🗳️</div>
+  </div>
+
   <div class="wrap">
-    <section class="hero">
-      <div class="badge">🐾 Welcome to Muffin’s corner</div>
-      <h1 class="title">Cat Blog is alive 🐱</h1>
-      <p class="subtitle">A cozy corner for Muffin's adventures, photos, and daily stories. Fast, simple, and purr-fect.</p>
-      <div class="status">CATBLOG_OK</div>
+    <!-- Top Left Quote -->
+    <div class="top-quote-box">
+      <p class="top-quote-text">
+        "I don't always wake humans at 4 AM, but when I do, it's for no reason."
+      </p>
+      <div class="top-quote-author">— Muffin</div>
+    </div>
 
-      <div class="grid">
-
-        <!-- ABOUT -->
-        <div class="card half">
-          <div class="inner">
-            <h3>About Muffin</h3>
-            <p class="muted">
-              <strong>Hello, I'm Muffin.</strong> A proud fluffy king who roams the apartment at 4 AM
-              ensuring shadows behave. Enjoy my adventures and finest poses below. 😺
-            </p>
-          </div>
+    <!-- About Muffin - Top Right Corner -->
+    <div class="about-muffin-box">
+      <h3 class="about-muffin-title">🐱 About Muffin</h3>
+      <p class="about-muffin-text">
+        A proud fluffy king who roams at 4 AM ensuring shadows behave. Master of chaos, ruler of zoomies, and official taste-tester. 😺
+      </p>
+      <div class="about-muffin-image">
+        <img src="IMG_6114.PNG" alt="Muffin's Regal Pose" loading="lazy" />
+      </div>
+    </div>
+    <!-- Hero Header -->
+    <header class="hero-header">
+      <div class="badge">🐾 Welcome to Muffin's Kingdom</div>
+      <h1 class="title">Muffin's Cat Blog</h1>
+      <p class="subtitle">A cozy corner showcasing the adventures, poses, and daily chaos of Muffin — your favorite 4 AM alarm clock 🐱</p>
+      
+      <div class="stats" id="stats">
+        <div class="stat-item">
+          <span class="stat-number" id="totalPhotos">8</span>
+          <div class="stat-label">Photos</div>
         </div>
-
-        <!-- GALLERY -->
-        <div class="card half">
-          <div class="inner"><h3>Photo Gallery</h3></div>
-          <div id="gallery" class="gallery"></div>
+        <div class="stat-item">
+          <span class="stat-number" id="totalLikes">0</span>
+          <div class="stat-label">Total Likes</div>
         </div>
+      </div>
+    </header>
 
-        <!-- STORY -->
-        <div class="card story-card-img">
-          <a class="story-banner" href="#fouram">
-            <div class="frame">
-              <img src="4am.jpg" alt="Muffin at 4 AM" loading="lazy" />
-            </div>
-            <div class="story-label">🌙 Muffin’s 4 AM Story</div>
-          </a>
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+      <div class="section-header">
+        <h2 class="section-title">Photo Gallery</h2>
+        <p class="section-subtitle">Click any photo to view full size • Show Muffin some love ❤️</p>
+      </div>
+      <div id="gallery" class="gallery"></div>
+    </section>
 
-          <div class="inner">
-            <h3>Muffin’s 4 AM Wake-Up Mission</h3>
-
-            <p class="muted">
-              Every morning at <strong>4 AM</strong>, Muffin performs his sacred ritual:
-              the “Wake Dad Immediately” operation.
-              <br><br>
-
-              Step 1: Walk across Dad’s face.  
-              Step 2: Meow once (dramatically).  
-              Step 3: Sprint into the darkness for no reason.  
-              Step 4: Return to stare at Dad like a disappointed manager.
-              <br><br>
-
-              Dad wakes up terrified.  
-              Muffin just wanted a snack. Or attention.  
-              Or simply to cause problems on purpose.
-              <br><br>
-
-              After Dad finally feeds him, Muffin sniffs the bowl,  
-              takes <strong>one</strong> bite… and walks away.
-              <br><br>
-
-              Because the goal was never food —  
-              <strong>the goal was chaos.</strong>
-            </p>
-          </div>
+    <!-- Featured Story -->
+    <section class="featured-section">
+      <div class="featured-card">
+        <div class="featured-image">
+          <img src="4am.jpg" alt="Muffin at 4 AM" loading="lazy" />
         </div>
-
+        <div class="featured-content">
+          <div class="featured-label">🌙 Featured Story</div>
+          <h2 class="featured-title">Muffin's 4 AM Wake-Up Mission</h2>
+          <p class="featured-text">
+            Every morning at <strong>4 AM sharp</strong>, Muffin executes his master plan. Step 1: Walk directly on Dad's face. Step 2: Meow like the house is on fire. Step 3: Sprint into the darkness and knock over everything. Step 4: Return to stare at Dad with those glowing eyes like "You know what you did wrong."
+            <br><br>
+            Dad wakes up, terrified and confused. He stumbles to the kitchen, fills the food bowl, and waits. Muffin approaches. Sniffs the food. Takes <strong>exactly one bite</strong>. Then walks away like a disappointed food critic.
+            <br><br>
+            Because here's the thing: Muffin doesn't actually want food. Muffin wants Dad to know who's in charge. And at 4 AM, when everyone is vulnerable, that's when chaos wins. 🐱
+          </p>
+        </div>
       </div>
     </section>
   </div>
 
-  <!-- LIGHTBOX -->
+  <!-- Lightbox -->
   <div id="lightbox" class="lightbox">
     <div class="lb-ui">
       <button id="prev" class="lb-btn">⟨ Prev</button>
@@ -308,8 +1208,6 @@
   <footer class="site-footer">Made with ❤️ for Muffin</footer>
 
   <script>
-    // API configuration - adjust this to your API endpoint
-    // For production, point to your EKS ingress endpoint
     const API_BASE = window.location.hostname === 'localhost' 
       ? 'http://localhost:3000' 
       : 'https://api.littlecat.net'; 
@@ -322,19 +1220,48 @@
     const lbimg = document.getElementById("lbimg");
     let idx = 0;
 
+    // Fallback photo list (in case API fails)
+    const fallbackPhotos = [
+      { id: '1', name: 'test.jpg', title: 'Muffin Portrait', likes: 0 },
+      { id: '2', name: '4am.jpg', title: '4 AM Adventure', likes: 0 },
+      { id: '3', name: 'images/placeholder3.jpg', title: 'Playful Moment', likes: 0 },
+      { id: '4', name: 'images/placeholder4.jpg', title: 'Curious Stare', likes: 0 },
+      { id: '5', name: 'IMG_6113.PNG', title: 'Muffin\'s Majesty', likes: 0 },
+      { id: '6', name: 'IMG_6114.PNG', title: 'Regal Pose', likes: 0 },
+      { id: '7', name: 'de1622f2-9bd1-43a2-b8eb-a238fb50391e.jpg', title: 'Muffin\'s Adventure', likes: 0 },
+      { id: '8', name: 'IMG-20241022-WA0009.jpg', title: 'Muffin\'s Moment', likes: 0 }
+    ];
+
     // Fetch photos from API
     async function loadPhotos() {
       try {
         const response = await fetch(`${API_BASE}/api/photos`);
+        if (!response.ok) {
+          throw new Error(`API returned ${response.status}`);
+        }
         const data = await response.json();
         photos = data.photos || [];
+        if (photos.length === 0) {
+          console.warn('API returned empty photos array, using fallback');
+          photos = fallbackPhotos;
+        }
+        console.log('Loaded photos:', photos);
         renderGallery();
+        updateStats();
       } catch (error) {
-        console.error('Failed to load photos:', error);
-        // Fallback to static images
-        photos = [{ id: '1', name: 'test.jpg', title: 'Muffin Portrait', likes: 0 }];
+        console.error('Failed to load photos from API:', error);
+        console.log('Using fallback photos');
+        photos = fallbackPhotos;
         renderGallery();
+        updateStats();
       }
+    }
+
+    // Update stats
+    function updateStats() {
+      const totalLikes = photos.reduce((sum, p) => sum + (p.likes || 0), 0);
+      document.getElementById('totalPhotos').textContent = photos.length;
+      document.getElementById('totalLikes').textContent = totalLikes;
     }
 
     // Render gallery
@@ -343,16 +1270,50 @@
       photos.forEach((photo, i) => {
         const fig = document.createElement("figure");
         fig.className = "photo";
+        fig.style.animationDelay = `${i * 0.05}s`;
         
         const img = document.createElement("img");
+        // Ensure proper path - images are in the same directory or subdirectory
         img.src = photo.name;
         img.alt = photo.title || "Muffin photo";
         img.loading = "lazy";
+        
+        // Detect portrait images and adjust positioning to show face
+        img.onload = function() {
+          console.log('Successfully loaded image:', photo.name);
+          // Check if image is portrait (height > width)
+          if (this.naturalHeight > this.naturalWidth) {
+            // For portrait images, especially "Curious Stare", position to show top/face
+            if (photo.name.includes('placeholder4') || photo.title === 'Curious Stare') {
+              fig.setAttribute('data-portrait', 'true');
+              this.style.objectPosition = 'center top';
+            } else {
+              fig.setAttribute('data-portrait', 'true');
+              this.style.objectPosition = 'center center';
+            }
+          }
+        };
+        
+        // Add error handling for broken images
+        img.onerror = function() {
+          console.error('Failed to load image:', photo.name);
+          this.style.display = 'none';
+          // Show a placeholder or error message
+          const errorDiv = document.createElement("div");
+          errorDiv.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:14px;';
+          errorDiv.textContent = 'Image not found';
+          fig.appendChild(errorDiv);
+        };
+        
         fig.appendChild(img);
         
-        // Overlay with like button
         const overlay = document.createElement("div");
         overlay.className = "photo-overlay";
+        
+        const title = document.createElement("p");
+        title.className = "photo-title";
+        title.textContent = photo.title || "Muffin";
+        overlay.appendChild(title);
         
         const likeBtn = document.createElement("button");
         likeBtn.className = "like-btn";
@@ -360,16 +1321,10 @@
         likeBtn.onclick = (e) => {
           e.stopPropagation();
           likePhoto(photo.id);
-          likeBtn.classList.add("liked");
-          setTimeout(() => {
-            const countSpan = likeBtn.querySelector(".like-count");
-            if (countSpan) countSpan.textContent = (photo.likes || 0) + 1;
-          }, 100);
         };
-        
         overlay.appendChild(likeBtn);
-        fig.appendChild(overlay);
         
+        fig.appendChild(overlay);
         fig.addEventListener("click", () => openLB(i));
         gallery.appendChild(fig);
       });
@@ -385,8 +1340,8 @@
         const photo = photos.find(p => p.id === photoId);
         if (photo) {
           photo.likes = data.photo.likes;
-          // Update UI
           renderGallery();
+          updateStats();
           updateLightboxLikeButton();
         }
       } catch (error) {
@@ -402,6 +1357,7 @@
         const count = document.getElementById("lbLikeCount");
         if (photo && btn && count) {
           count.textContent = photo.likes || 0;
+          btn.classList.toggle("liked", photo.likes > 0);
         }
       }
     }
@@ -410,24 +1366,41 @@
       idx = i;
       currentPhotoId = photos[i]?.id;
       lbimg.src = photos[i].name;
+      lbimg.onerror = function() {
+        console.error('Failed to load image in lightbox:', photos[i].name);
+        this.alt = 'Image not found: ' + photos[i].name;
+      };
       updateLightboxLikeButton();
       lb.classList.add("open");
+      document.body.style.overflow = 'hidden';
     }
+
     function closeLB(){
       lb.classList.remove("open");
       lbimg.src = "";
       currentPhotoId = null;
+      document.body.style.overflow = '';
     }
+
     function next(){
       idx = (idx + 1) % photos.length;
       currentPhotoId = photos[idx]?.id;
       lbimg.src = photos[idx].name;
+      lbimg.onerror = function() {
+        console.error('Failed to load image in lightbox:', photos[idx].name);
+        this.alt = 'Image not found: ' + photos[idx].name;
+      };
       updateLightboxLikeButton();
     }
+
     function prev(){
       idx = (idx - 1 + photos.length) % photos.length;
       currentPhotoId = photos[idx]?.id;
       lbimg.src = photos[idx].name;
+      lbimg.onerror = function() {
+        console.error('Failed to load image in lightbox:', photos[idx].name);
+        this.alt = 'Image not found: ' + photos[idx].name;
+      };
       updateLightboxLikeButton();
     }
 
@@ -435,13 +1408,10 @@
     document.getElementById("prev").addEventListener("click", prev);
     document.getElementById("close").addEventListener("click", closeLB);
     
-    // Lightbox like button
     document.getElementById("lbLikeBtn").addEventListener("click", (e) => {
       e.stopPropagation();
       if (currentPhotoId) {
         likePhoto(currentPhotoId);
-        const btn = document.getElementById("lbLikeBtn");
-        btn.classList.add("liked");
       }
     });
 
