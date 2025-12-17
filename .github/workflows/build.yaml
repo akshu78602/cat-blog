@@ -7,6 +7,11 @@ on:
     paths:
       - 'site/**'
       - '.github/workflows/build.yaml'
+    pull_request:
+      - master
+    paths:
+      - 'site/**'
+      - '.github/workflows/build.yaml'
 
 permissions:
   contents: read
